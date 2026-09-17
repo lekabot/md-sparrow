@@ -21,6 +21,7 @@
  */
 package io.github.yellowhammer.designerxml.cf;
 
+import io.github.yellowhammer.designerxml.Cancellation;
 import io.github.yellowhammer.edt.EdtLayout;
 import io.github.yellowhammer.edt.EdtObjectGraph;
 import java.io.IOException;
@@ -168,6 +169,7 @@ public final class ProjectMetadataGraphBuilder {
     Map<EdgeKey, MutableEdge> edges,
     Map<String, List<String>> subsystemKeysByTarget
   ) throws IOException {
+    Cancellation.checkpoint();
     String key = item.objectType() + "." + item.name();
     Path xml = item.relativePath() == null || item.relativePath().isEmpty()
       ? null

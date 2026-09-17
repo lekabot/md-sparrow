@@ -123,14 +123,23 @@ import java.util.concurrent.Callable;
     DesignerXmlCli.InitEmptyCfeCmd.class,
     DesignerXmlCli.CfValidateDumpCmd.class,
     DesignerXmlCli.ProjectMetadataTreeCmd.class,
-    DesignerXmlCli.CfMdGraphCmd.class
+    DesignerXmlCli.CfMdGraphCmd.class,
+    ServeCmd.class
   },
   description = "Чтение/запись Designer XML по XSD (JAXB)."
 )
 public final class DesignerXmlCli implements Callable<Integer> {
 
+  /** Каталог, от которого считаются относительные пути; {@code null} - рабочий каталог процесса. */
+  private final Path workingDirectory;
+
   /** Создаёт корневую команду для picocli. */
   public DesignerXmlCli() {
+    this(null);
+  }
+
+  private DesignerXmlCli(Path workingDirectory) {
+    this.workingDirectory = workingDirectory;
   }
 
   /**
@@ -141,9 +150,33 @@ public final class DesignerXmlCli implements Callable<Integer> {
 
     @Override
     public String[] getVersion() {
-      String version = DesignerXmlCli.class.getPackage().getImplementationVersion();
-      return new String[] {"md-sparrow " + (version == null ? "dev" : version)};
+      return new String[] {"md-sparrow " + version()};
     }
+  }
+
+  /** Версия сборки из манифеста jar; {@code dev} при запуске из классов. */
+  static String version() {
+    String version = DesignerXmlCli.class.getPackage().getImplementationVersion();
+    return version == null ? "dev" : version;
+  }
+
+  /**
+   * Командная строка, в которой относительные пути считаются от {@code workingDirectory}.
+   *
+   * @param workingDirectory абсолютный каталог; {@code null} - рабочий каталог процесса
+   */
+  static CommandLine commandLine(Path workingDirectory) {
+    DesignerXmlCli root = new DesignerXmlCli(workingDirectory);
+    CommandLine cli = new CommandLine(root);
+    if (workingDirectory != null) {
+      cli.registerConverter(Path.class, root::path);
+    }
+    return cli;
+  }
+
+  /** Путь из аргумента команды: относительный считается от рабочего каталога команды. */
+  Path path(String value) {
+    return workingDirectory == null ? Path.of(value) : workingDirectory.resolve(value);
   }
 
   @Override
@@ -158,7 +191,7 @@ public final class DesignerXmlCli implements Callable<Integer> {
    * @param args аргументы командной строки
    */
   public static void main(String[] args) {
-    int exit = new CommandLine(new DesignerXmlCli()).execute(args);
+    int exit = commandLine(null).execute(args);
     System.exit(exit);
   }
 

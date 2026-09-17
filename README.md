@@ -39,6 +39,7 @@ java -jar build/libs/md-sparrow-0.4.1-all.jar --help
 - [docs/form-content.md](docs/form-content.md) — содержимое управляемой формы в JSON.
 - [docs/scaffold-golden.md](docs/scaffold-golden.md) — создание объектов по эталонам.
 - [docs/validate-dump.md](docs/validate-dump.md) — проверка целостности выгрузки и виды находок.
+- [docs/serve.md](docs/serve.md) — резидентный режим: команды по запросам из stdin без запуска процесса на каждую.
 
 ## Лицензия
 

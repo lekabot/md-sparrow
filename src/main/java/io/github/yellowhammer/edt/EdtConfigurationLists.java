@@ -30,6 +30,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Stream;
 
+import io.github.yellowhammer.designerxml.Cancellation;
 import io.github.yellowhammer.designerxml.cf.ChildObjectEntry;
 import io.github.yellowhammer.designerxml.cf.MetadataRefParser;
 import io.github.yellowhammer.designerxml.cf.SubsystemTreeBuilder;
@@ -129,6 +130,7 @@ public final class EdtConfigurationLists {
 
   /** Подсистема со своим составом и вложенными подсистемами. */
   private static SubsystemTreeBuilder.SubsystemNodeDto subsystem(Path subsystemMdo) throws IOException {
+    Cancellation.checkpoint();
     EdtObjectReader.EdtNode node = EdtObjectReader.read(subsystemMdo);
     List<SubsystemTreeBuilder.SubsystemNodeDto> children = new ArrayList<>();
     Path nested = subsystemMdo.getParent().resolve("Subsystems");

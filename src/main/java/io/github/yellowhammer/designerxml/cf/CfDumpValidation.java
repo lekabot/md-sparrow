@@ -8,6 +8,7 @@
  */
 package io.github.yellowhammer.designerxml.cf;
 
+import io.github.yellowhammer.designerxml.Cancellation;
 import io.github.yellowhammer.designerxml.SchemaVersion;
 
 import java.io.IOException;
@@ -193,6 +194,7 @@ public final class CfDumpValidation {
   private static void checkDeclaredFiles(Path cfRoot, List<ChildObjectEntry> declared, List<CfDumpFinding> findings)
     throws IOException {
     for (ChildObjectEntry entry : declared) {
+      Cancellation.checkpoint();
       if (CfObjectPathResolver.objectXml(cfRoot, entry.objectType(), entry.name()).isPresent()) {
         continue;
       }
@@ -233,6 +235,7 @@ public final class CfDumpValidation {
     Path cfRoot, List<ChildObjectEntry> declared, String expectedVersion, List<CfDumpFinding> findings)
     throws IOException {
     for (ChildObjectEntry entry : declared) {
+      Cancellation.checkpoint();
       Optional<Path> file = CfObjectPathResolver.objectXml(cfRoot, entry.objectType(), entry.name());
       if (file.isEmpty()) {
         continue;
@@ -276,6 +279,7 @@ public final class CfDumpValidation {
         .toList();
     }
     for (Path file : files) {
+      Cancellation.checkpoint();
       checkReferencesIn(
         cfRoot, relative(cfRoot, file), Files.readString(file, StandardCharsets.UTF_8),
         declaredKeys, resolved, findings);

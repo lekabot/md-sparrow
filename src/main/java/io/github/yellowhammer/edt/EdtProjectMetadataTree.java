@@ -28,6 +28,7 @@ import java.util.List;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+import io.github.yellowhammer.designerxml.Cancellation;
 import io.github.yellowhammer.designerxml.cf.ChildObjectEntry;
 import io.github.yellowhammer.designerxml.cf.LocalStrings;
 import io.github.yellowhammer.designerxml.cf.SupportRules;
@@ -162,6 +163,7 @@ public final class EdtProjectMetadataTree {
       Map<String, String> inlineUuids) throws IOException {
     List<ProjectMetadataTreeDto.MetadataItemDto> items = new ArrayList<>();
     for (MetadataTreeTagGroups.MetadataTreeItemPayload payload : payloads) {
+      Cancellation.checkpoint();
       Path objectMdo = EdtLayout.objectMdo(sourceRoot, payload.objectType(), payload.name()).orElse(null);
       String relativePath = objectMdo == null ? "" : relative(workspaceRoot, objectMdo);
       // Описание объекта читается один раз: из него и принадлежность, и синоним, и идентификатор

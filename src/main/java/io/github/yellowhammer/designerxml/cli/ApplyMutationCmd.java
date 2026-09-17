@@ -52,6 +52,7 @@ import io.github.yellowhammer.designerxml.cf.NewExternalArtifactXml;
 import jakarta.xml.bind.JAXBException;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
+import picocli.CommandLine.ParentCommand;
 
 import io.github.yellowhammer.edt.EdtLayout;
 import io.github.yellowhammer.edt.EdtConfigurationProperties;
@@ -101,11 +102,14 @@ final class ApplyMutationCmd implements Callable<Integer> {
   )
   Path paramsFile;
 
+  @ParentCommand
+  DesignerXmlCli root;
+
   @Override
   public Integer call() {
     CliParams p;
     try {
-      p = CliParams.read(paramsFile);
+      p = CliParams.read(paramsFile, root::path);
     } catch (JsonSyntaxException e) {
       System.err.println("некорректный JSON параметров: " + e.getMessage());
       return 2;
@@ -186,7 +190,7 @@ final class ApplyMutationCmd implements Callable<Integer> {
         ? EmptyCfeScaffold.Purpose.CUSTOMIZATION
         : EmptyCfeScaffold.Purpose.fromCliName(p.purpose);
       EdtExtensionScaffold.create(
-        Path.of(p.mainConfigurationXml),
+        p.path(p.mainConfigurationXml),
         p.reqPath(p.targetCfeRoot, "targetCfeRoot"),
         p.req(p.name, "name"),
         p.synonym,
@@ -198,25 +202,25 @@ final class ApplyMutationCmd implements Callable<Integer> {
     if ("external-artifact-add".equals(p.op) && EdtLayout.isObjectFile(p.mainConfigurationXml)) {
       return EdtExternalArtifacts.create(
         p.reqPath(p.artifactsRoot, "artifactsRoot"),
-        Path.of(p.mainConfigurationXml),
+        p.path(p.mainConfigurationXml),
         p.req(p.name, "name"),
         ExternalArtifactKind.fromCli(p.req(p.kind, "kind"))).toString();
     }
     if ("cf-support-remove".equals(p.op) && EdtLayout.isObjectFile(p.configurationXml)) {
-      EdtSupportRules.removeSupport(Path.of(p.configurationXml), p.expectedGeneration);
+      EdtSupportRules.removeSupport(p.path(p.configurationXml), p.expectedGeneration);
       return "OK";
     }
     // Субъект поддержки бывает и формой, и модулем: формат виден по проекту вокруг файла
     boolean inEdtProject = p.objectXml != null && !p.objectXml.isBlank()
-      && EdtSupportRules.sourceRoot(Path.of(p.objectXml)) != null;
+      && EdtSupportRules.sourceRoot(p.path(p.objectXml)) != null;
     if ("cf-support-object-mode-set".equals(p.op) && inEdtProject) {
       EdtSupportRules.setModeForFile(
-        Path.of(p.objectXml), supportMode(p), "children".equals(p.tag), p.expectedGeneration);
+        p.path(p.objectXml), supportMode(p), "children".equals(p.tag), p.expectedGeneration);
       return "OK";
     }
     if ("cf-support-element-mode-set".equals(p.op) && inEdtProject) {
       EdtSupportRules.setModeForElement(
-        Path.of(p.objectXml), p.req(p.tag, "tag"), supportMode(p), p.expectedGeneration);
+        p.path(p.objectXml), p.req(p.tag, "tag"), supportMode(p), p.expectedGeneration);
       return "OK";
     }
     if (!EdtLayout.isObjectFile(p.objectXml)) {
@@ -311,7 +315,7 @@ final class ApplyMutationCmd implements Callable<Integer> {
     if ("cfe-borrow-object".equals(p.op)) {
       return;
     }
-    Path objectMdo = Path.of(p.objectXml);
+    Path objectMdo = p.path(p.objectXml);
     EdtSupportRules.ensureEditable(objectMdo);
     if (!p.op.startsWith("cf-md-")) {
       return;
@@ -393,7 +397,7 @@ final class ApplyMutationCmd implements Callable<Integer> {
       ? name
       : p.tabularSection + "/" + name;
     SupportRules.ensureElementEditable(
-      Path.of(p.objectXml), "element:" + p.op.substring(0, lastDash) + ":" + path);
+      p.path(p.objectXml), "element:" + p.op.substring(0, lastDash) + ":" + path);
   }
 
   /**
@@ -411,8 +415,8 @@ final class ApplyMutationCmd implements Callable<Integer> {
     }
     refuseLockedElement(p);
     // Остальные правки объекта проекта EDT идут общим разбором: запрет поставщика проверяется здесь
-    if (p.objectXml != null && !p.objectXml.isBlank() && EdtSupportRules.sourceRoot(Path.of(p.objectXml)) != null) {
-      EdtSupportRules.ensureEditable(Path.of(p.objectXml));
+    if (p.objectXml != null && !p.objectXml.isBlank() && EdtSupportRules.sourceRoot(p.path(p.objectXml)) != null) {
+      EdtSupportRules.ensureEditable(p.path(p.objectXml));
     }
     switch (p.op) {
       case "cf-md-object-delete":
@@ -820,7 +824,7 @@ final class ApplyMutationCmd implements Callable<Integer> {
             p.synonym,
             p.namePrefix,
             purpose,
-            Path.of(p.mainConfigurationXml),
+            p.path(p.mainConfigurationXml),
             p.version());
           return "OK: " + target.toAbsolutePath();
         }
