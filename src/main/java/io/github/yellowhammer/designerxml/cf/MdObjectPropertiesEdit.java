@@ -315,7 +315,7 @@ public final class MdObjectPropertiesEdit {
     new NamedChildDef("getRecalculation", dto -> dto.recalculations),
     new NamedChildDef("getOperation", dto -> dto.operations),
     new NamedChildDef("getURLTemplate", dto -> dto.urlTemplates),
-    new NamedChildDef("getChannel", dto -> dto.channels),
+    new NamedChildDef("getIntegrationServiceChannel", dto -> dto.channels),
     new NamedChildDef("getTable", dto -> dto.tables),
     new NamedChildDef("getCube", dto -> dto.cubes),
     new NamedChildDef("getFunction", dto -> dto.functions)
