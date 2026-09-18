@@ -43,11 +43,12 @@ import io.github.yellowhammer.edt.EdtObjectReader.EdtNode;
  * Строение объекта 1С:EDT: чем он раскрывается в дереве метаданных.
  *
  * Что бывает у вида объекта своим, знает схема, и названо это там так же, как
- * поля контракта. Исключение одно: значения перечисления контракт зовёт короче.
+ * поля контракта. Исключения: значения перечисления строение зовёт короче, чем
+ * свойства объекта, а прочие расхождения собраны в {@link EdtContractNames}.
  */
 public final class EdtObjectStructure {
 
-  /** Поле контракта, названное иначе, чем свойство схемы. */
+  /** Поле строения, названное иначе, чем свойство схемы. */
   private static final Map<String, String> RENAMED = Map.of("values", "enumValues");
 
   private EdtObjectStructure() {
@@ -155,7 +156,7 @@ public final class EdtObjectStructure {
       if (!field.getGenericType().getTypeName().endsWith("<java.lang.String>")) {
         continue;
       }
-      String feature = RENAMED.getOrDefault(field.getName(), field.getName());
+      String feature = RENAMED.getOrDefault(field.getName(), EdtContractNames.feature(field.getName()));
       List<EdtNode> children = node.list(feature);
       if (children.isEmpty()) {
         continue;

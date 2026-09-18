@@ -105,13 +105,14 @@ public final class EdtObjectProperties {
    * Заполняет подчинённые узлы объекта.
    *
    * Что у вида бывает своим - реквизиты, измерения, графы, операции - знает
-   * схема, и названы они там так же, как поля контракта.
+   * схема, и названы они там так же, как поля контракта, кроме собранных в
+   * {@link EdtContractNames}.
    */
   private static void fillChildren(MdObjectPropertiesDto dto, EdtNode node, EdtModel model) {
     for (EdtModel.Composition item : model.composition(node.kind())) {
       Field field;
       try {
-        field = MdObjectPropertiesDto.class.getField(item.feature());
+        field = MdObjectPropertiesDto.class.getField(EdtContractNames.field(item.feature()));
       } catch (NoSuchFieldException absent) {
         // Формы и макеты панель свойств не показывает
         continue;
