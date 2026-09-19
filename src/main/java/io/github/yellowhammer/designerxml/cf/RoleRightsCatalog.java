@@ -21,8 +21,10 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Права, которые платформа принимает у объекта каждого вида, и связи между ними.
@@ -60,6 +62,26 @@ public final class RoleRightsCatalog {
   public static Map<String, List<String>> rightsByKind() {
     Map<String, List<String>> out = new LinkedHashMap<>();
     KINDS.forEach((kind, value) -> out.put(kind, value.rights()));
+    return out;
+  }
+
+  /** Право и все, без которых оно не действует. */
+  public static Set<String> withRequired(Kind kind, String right) {
+    Set<String> out = new LinkedHashSet<>();
+    out.add(right);
+    out.addAll(kind.requires().getOrDefault(right, List.of()));
+    return out;
+  }
+
+  /** Право и все, которые без него не действуют. */
+  public static Set<String> withDependent(Kind kind, String right) {
+    Set<String> out = new LinkedHashSet<>();
+    out.add(right);
+    for (Map.Entry<String, List<String>> entry : kind.requires().entrySet()) {
+      if (entry.getValue().contains(right)) {
+        out.add(entry.getKey());
+      }
+    }
     return out;
   }
 

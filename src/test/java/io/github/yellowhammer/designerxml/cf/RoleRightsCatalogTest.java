@@ -12,6 +12,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import org.junit.jupiter.api.Test;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -37,6 +38,23 @@ class RoleRightsCatalogTest {
         assertThat(kind.rights()).as(name + "." + right).containsAll(required);
       });
     }
+  }
+
+  @Test
+  void grantedRightBringsRequiredOnes() {
+    RoleRightsCatalog.Kind document = RoleRightsCatalog.kind("Document");
+
+    assertThat(RoleRightsCatalog.withRequired(document, "InteractivePosting"))
+      .containsExactly("InteractivePosting", "Read", "Update", "Posting", "View", "Edit");
+  }
+
+  @Test
+  void revokedReadTakesEverythingButHistorySettings() {
+    RoleRightsCatalog.Kind catalog = RoleRightsCatalog.kind("Catalog");
+    List<String> expected = new ArrayList<>(catalog.rights());
+    expected.remove("UpdateDataHistorySettings");
+
+    assertThat(RoleRightsCatalog.withDependent(catalog, "Read")).containsExactlyInAnyOrderElementsOf(expected);
   }
 
   @Test

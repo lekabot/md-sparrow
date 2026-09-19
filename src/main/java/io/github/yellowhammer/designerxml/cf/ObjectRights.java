@@ -16,13 +16,18 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
 /**
- * Права всех ролей на один объект метаданных: чтение одним проходом по ролям.
+ * Права всех ролей на один объект метаданных: чтение одним проходом по ролям и правка.
  *
  * <p>Файл прав хранит отличия от умолчания роли: при включённом «Устанавливать
  * права для новых объектов» записаны снятые права, при выключенном - выданные.
@@ -71,6 +76,13 @@ public final class ObjectRights {
     /** Путь от объекта: {@code Attribute.Цена}. */
     public String name;
     public Map<String, Boolean> rights = new LinkedHashMap<>();
+  }
+
+  /** Правка: роль, право, выдать или снять. */
+  public static final class Edit {
+    public String role;
+    public String right;
+    public boolean value;
   }
 
   /** Объект в файлах прав и корень его проекта. */
@@ -133,6 +145,127 @@ public final class ObjectRights {
       role.readonlyReason = roleLock(roleFile);
     }
     return role;
+  }
+
+  /**
+   * Правит права ролей на объект.
+   *
+   * <p>Выданное право тянет за собой те, без которых не действует, снятое снимает
+   * зависящие от него. Блок нового объекта встаёт на место по идентификатору объекта.
+   * Файлы ролей пишутся, только когда правки всех ролей прошли проверку.
+   */
+  public static void apply(Path objectFile, List<Edit> edits) throws IOException {
+    Target target = target(objectFile);
+    if (target.edt()) {
+      throw new IllegalArgumentException("Правка прав в проекте 1С:EDT не поддержана.");
+    }
+    RoleRightsCatalog.Kind kind = RoleRightsCatalog.kind(target.kind());
+    if (kind == null) {
+      throw new IllegalArgumentException("У объекта вида " + target.kind() + " нет прав в ролях.");
+    }
+    Map<String, List<Edit>> byRole = new LinkedHashMap<>();
+    for (Edit edit : edits == null ? List.<Edit>of() : edits) {
+      if (edit == null || edit.role == null || edit.right == null) {
+        continue;
+      }
+      if (!kind.rights().contains(edit.right)) {
+        throw new IllegalArgumentException("У объекта вида " + target.kind() + " нет права " + edit.right + ".");
+      }
+      byRole.computeIfAbsent(edit.role, key -> new ArrayList<>()).add(edit);
+    }
+    Path rolesDir = target.sourceRoot().resolve(ROLES);
+    UuidOrder order = new UuidOrder(target.sourceRoot());
+    Map<Path, String> updates = new LinkedHashMap<>();
+    for (Map.Entry<String, List<Edit>> entry : byRole.entrySet()) {
+      String role = entry.getKey();
+      Path roleFile = rolesDir.resolve(role + ".xml");
+      if (!Files.isRegularFile(roleFile)) {
+        throw new IllegalArgumentException("Нет роли " + role + ".");
+      }
+      String lock = roleLock(roleFile);
+      if (lock != null) {
+        throw new IllegalStateException(lock);
+      }
+      Path file = rightsFile(roleFile, false);
+      if (!Files.isRegularFile(file)) {
+        throw new IllegalArgumentException("У роли " + role + " нет файла прав: " + file);
+      }
+      String text = Files.readString(file, StandardCharsets.UTF_8);
+      String updated = applyToRole(text, target, kind, entry.getValue(), order);
+      if (!updated.equals(text)) {
+        updates.put(file, updated);
+      }
+    }
+    for (Map.Entry<Path, String> update : updates.entrySet()) {
+      Files.writeString(update.getKey(), update.getValue(), StandardCharsets.UTF_8);
+    }
+  }
+
+  private static String applyToRole(
+      String text, Target target, RoleRightsCatalog.Kind kind, List<Edit> edits, UuidOrder order) {
+    boolean byDefault = RightsText.setForNewObjects(text);
+    RightsText.Block block = null;
+    for (RightsText.Block candidate : RightsText.blocksOf(text, target.object())) {
+      if (candidate.name().equals(target.object())) {
+        block = candidate;
+        break;
+      }
+    }
+    Map<String, RightsText.Right> stored = new LinkedHashMap<>();
+    if (block != null) {
+      for (RightsText.Right right : block.rights()) {
+        stored.put(right.name(), right);
+      }
+    }
+    Map<String, Boolean> effective = new HashMap<>();
+    for (String right : kind.rights()) {
+      RightsText.Right known = stored.get(right);
+      effective.put(right, known == null ? byDefault : known.value());
+    }
+    for (Edit edit : edits) {
+      var linked = edit.value
+        ? RoleRightsCatalog.withRequired(kind, edit.right)
+        : RoleRightsCatalog.withDependent(kind, edit.right);
+      for (String right : linked) {
+        effective.put(right, edit.value);
+      }
+    }
+    String eol = text.contains("\r\n") ? "\r\n" : "\n";
+    StringBuilder rights = new StringBuilder();
+    for (String right : kind.rights()) {
+      boolean value = effective.get(right);
+      RightsText.Right known = stored.get(right);
+      boolean restricted = known != null && known.restricted();
+      if (value == byDefault && !restricted) {
+        continue;
+      }
+      appendRight(rights, right, value, restricted ? known.tail() : eol + "\t\t", eol);
+    }
+    // Права вне набора вида остаются как были
+    for (RightsText.Right right : stored.values()) {
+      if (!kind.rights().contains(right.name())) {
+        appendRight(rights, right.name(), right.value(), right.tail(), eol);
+      }
+    }
+    String replacement = rights.length() == 0 ? "" : "\t<object>" + eol
+      + "\t\t<name>" + target.object() + "</name>" + eol
+      + rights
+      + "\t</object>" + eol;
+    if (block != null) {
+      return text.substring(0, block.start()) + replacement + text.substring(block.end());
+    }
+    if (replacement.isEmpty()) {
+      return text;
+    }
+    int at = order.insertionPoint(text, target.object());
+    return text.substring(0, at) + replacement + text.substring(at);
+  }
+
+  private static void appendRight(StringBuilder out, String name, boolean value, String tail, String eol) {
+    out.append("\t\t<right>").append(eol)
+      .append("\t\t\t<name>").append(name).append("</name>").append(eol)
+      .append("\t\t\t<value>").append(value).append("</value>").append(tail)
+      .append("</right>").append(eol);
   }
 
   private static Target target(Path objectFile) throws IOException {
@@ -272,5 +405,146 @@ public final class ObjectRights {
 
   private static String stem(Path file) {
     return file.getFileName().toString().replaceFirst("[.](xml|mdo)$", "");
+  }
+
+  /**
+   * Порядок блоков в файле прав: по идентификатору объекта, как строке.
+   *
+   * <p>Стандартные реквизиты своего идентификатора не имеют и идут сразу за
+   * владельцем, поэтому их место определяет идентификатор владельца.
+   */
+  static final class UuidOrder {
+
+    private static final Pattern CHILD_HEAD = Pattern.compile(
+      "<(\\w+) uuid=\"([^\"]+)\">\\s*<Properties>\\s*<Name>([^<]+)</Name>");
+
+    private final Path root;
+    private final Map<String, String> known = new HashMap<>();
+
+    UuidOrder(Path root) {
+      this.root = root;
+    }
+
+    int insertionPoint(String text, String object) {
+      String own = uuid(object);
+      List<RightsText.Block> blocks = RightsText.blocks(text);
+      if (blocks.isEmpty() || own == null) {
+        return afterBlocks(text, blocks);
+      }
+      int low = 0;
+      int high = blocks.size();
+      while (low < high) {
+        int mid = (low + high) >>> 1;
+        String other = nearestUuid(blocks, mid, low, high);
+        if (other == null) {
+          break;
+        }
+        if (other.compareTo(own) < 0) {
+          low = mid + 1;
+        } else {
+          high = mid;
+        }
+      }
+      return low < blocks.size() ? blocks.get(low).start() : afterBlocks(text, blocks);
+    }
+
+    /** Идентификатор блока; у нечитаемого берётся ближайший соседний в пределах поиска. */
+    private String nearestUuid(List<RightsText.Block> blocks, int mid, int low, int high) {
+      for (int step = 0; mid - step >= low || mid + step < high; step++) {
+        if (mid + step < high) {
+          String value = uuid(blocks.get(mid + step).name());
+          if (value != null) {
+            return value;
+          }
+        }
+        if (step > 0 && mid - step >= low) {
+          String value = uuid(blocks.get(mid - step).name());
+          if (value != null) {
+            return value;
+          }
+        }
+      }
+      return null;
+    }
+
+    private static int afterBlocks(String text, List<RightsText.Block> blocks) {
+      if (!blocks.isEmpty()) {
+        return blocks.get(blocks.size() - 1).end();
+      }
+      int template = text.indexOf("<restrictionTemplate");
+      if (template >= 0) {
+        return RightsText.lineStart(text, template);
+      }
+      int closing = text.lastIndexOf("</Rights>");
+      if (closing < 0) {
+        throw new IllegalArgumentException("Файл прав без корневого элемента Rights.");
+      }
+      return RightsText.lineStart(text, closing);
+    }
+
+    String uuid(String object) {
+      return known.computeIfAbsent(object, this::resolve);
+    }
+
+    private String resolve(String object) {
+      try {
+        String[] parts = object.split("[.]");
+        if (parts.length < 2) {
+          return null;
+        }
+        if ("Configuration".equals(parts[0])) {
+          return head(root.resolve("Configuration.xml"));
+        }
+        if (parts.length >= 4 && "StandardAttribute".equals(parts[parts.length - 2])) {
+          return uuid(String.join(".", Arrays.copyOf(parts, parts.length - 2)));
+        }
+        String directory = CfObjectPathResolver.subdirsByType().get(parts[0]);
+        if (directory == null) {
+          return null;
+        }
+        Path file = root.resolve(directory).resolve(parts[1] + ".xml");
+        String owner = parts[1];
+        String region = null;
+        String found = null;
+        for (int index = 2; index + 1 < parts.length; index += 2) {
+          // Подсистемы, перерасчёты, таблицы лежат своими файлами в каталоге владельца
+          Path own = file.resolveSibling(owner).resolve(parts[index] + "s").resolve(parts[index + 1] + ".xml");
+          if (Files.isRegularFile(own)) {
+            file = own;
+            owner = parts[index + 1];
+            region = null;
+            found = null;
+            continue;
+          }
+          if (region == null) {
+            if (!Files.isRegularFile(file)) {
+              return null;
+            }
+            region = Files.readString(file, StandardCharsets.UTF_8);
+          }
+          Matcher matcher = CHILD_HEAD.matcher(region);
+          found = null;
+          while (matcher.find()) {
+            if (matcher.group(1).equals(parts[index]) && matcher.group(3).equals(parts[index + 1])) {
+              found = matcher.group(2).toLowerCase(Locale.ROOT);
+              int close = region.indexOf("</" + parts[index] + ">", matcher.end());
+              region = region.substring(matcher.start(), close < 0 ? region.length() : close);
+              break;
+            }
+          }
+          if (found == null) {
+            return null;
+          }
+        }
+        return found != null ? found : head(file);
+      } catch (IOException | RuntimeException e) {
+        return null;
+      }
+    }
+
+    private static String head(Path file) {
+      String value = ObjectHead.read(file).uuid();
+      return value == null ? null : value.toLowerCase(Locale.ROOT);
+    }
   }
 }

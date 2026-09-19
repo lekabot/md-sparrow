@@ -71,6 +71,24 @@ final class RightsText {
     return false;
   }
 
+  /** Все блоки объектов в порядке файла. */
+  static List<Block> blocks(String text) {
+    List<Block> out = new ArrayList<>();
+    int from = 0;
+    while (true) {
+      int open = text.indexOf(OBJECT_OPEN, from);
+      if (open < 0) {
+        return out;
+      }
+      Block block = blockAt(text, open);
+      if (block == null) {
+        return out;
+      }
+      out.add(block);
+      from = block.end();
+    }
+  }
+
   /**
    * Блоки объекта и его подчинённых: сам {@code Catalog.Товары} и
    * {@code Catalog.Товары.Attribute.Цена}, но не {@code Catalog.ТоварыПоставщиков}.
