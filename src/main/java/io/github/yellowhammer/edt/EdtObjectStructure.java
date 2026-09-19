@@ -82,6 +82,7 @@ public final class EdtObjectStructure {
     // Подпись стандартного реквизита даёт платформа, а файл - только переопределения
     dto.standardAttributeSynonyms = new LinkedHashMap<>(StandardAttributeLabels.ofObject(dto.kind));
     dto.standardAttributeSynonyms.putAll(synonyms(node.list("standardAttributes")));
+    dto.standardTabularSections = standardTabularSections(node, dto.kind);
     dto.commandSynonyms = synonyms(node.list("commands"));
     dto.childSynonyms = childSynonyms(node, model);
 
@@ -216,6 +217,26 @@ public final class EdtObjectStructure {
       section.attributes = nodes(child.list("attributes"));
       section.standardAttributes = names(child.list("standardAttributes"));
       section.standardAttributeSynonyms = new LinkedHashMap<>(StandardAttributeLabels.ofTabularSection());
+      section.standardAttributeSynonyms.putAll(synonyms(child.list("standardAttributes")));
+      sections.add(section);
+    }
+    return sections;
+  }
+
+  /** Стандартные табличные части: подписи даёт платформа, а файл - только переопределения. */
+  private static List<MdObjectStructureDto.MdTabularSectionDto> standardTabularSections(EdtNode node, String kind) {
+    List<MdObjectStructureDto.MdTabularSectionDto> sections = new ArrayList<>();
+    for (EdtNode child : node.list("standardTabularSections")) {
+      MdObjectStructureDto.MdTabularSectionDto section = new MdObjectStructureDto.MdTabularSectionDto();
+      section.name = child.name();
+      String synonym = EdtPropertyValues.localized(child, "synonym");
+      section.synonym = synonym.isEmpty()
+          ? StandardAttributeLabels.standardTabularSectionLabel(kind, section.name)
+          : synonym;
+      section.comment = child.property("comment");
+      section.standardAttributes = names(child.list("standardAttributes"));
+      section.standardAttributeSynonyms =
+          new LinkedHashMap<>(StandardAttributeLabels.ofStandardTabularSection(kind, section.name));
       section.standardAttributeSynonyms.putAll(synonyms(child.list("standardAttributes")));
       sections.add(section);
     }

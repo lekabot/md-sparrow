@@ -1,0 +1,335 @@
+{
+  "Configuration": {
+    "rights": ["Administration", "DataAdministration", "UpdateDataBaseConfiguration", "ExclusiveMode", "ActiveUsers", "EventLog", "ThinClient", "WebClient", "MobileClient", "ThickClient", "ExternalConnection", "Automation", "TechnicalSpecialistMode", "CollaborationSystemInfoBaseRegistration", "MainWindowModeNormal", "MainWindowModeWorkplace", "MainWindowModeEmbeddedWorkplace", "MainWindowModeFullscreenWorkplace", "MainWindowModeKiosk", "AnalyticsSystemClient", "ExclusiveModeTerminationAtSessionStart", "SaveUserData", "ConfigurationExtensionsAdministration", "InteractiveOpenExtDataProcessors", "InteractiveOpenExtReports", "Output"],
+    "requires": {
+      "Administration": ["DataAdministration"]
+    }
+  },
+  "Catalog": {
+    "rights": ["Read", "Insert", "Update", "Delete", "View", "InteractiveInsert", "Edit", "InteractiveDelete", "InteractiveSetDeletionMark", "InteractiveClearDeletionMark", "InteractiveDeleteMarked", "InputByString", "InteractiveDeletePredefinedData", "InteractiveSetDeletionMarkPredefinedData", "InteractiveClearDeletionMarkPredefinedData", "InteractiveDeleteMarkedPredefinedData", "ReadDataHistory", "ReadDataHistoryOfMissingData", "UpdateDataHistory", "UpdateDataHistoryOfMissingData", "UpdateDataHistorySettings", "UpdateDataHistoryVersionComment", "ViewDataHistory", "EditDataHistoryVersionComment", "SwitchToDataHistoryVersion"],
+    "requires": {
+      "Insert": ["Read"],
+      "Update": ["Read"],
+      "Delete": ["Read"],
+      "View": ["Read"],
+      "InteractiveInsert": ["Read", "Insert", "Update", "View", "Edit"],
+      "Edit": ["Read", "Update", "View"],
+      "InteractiveDelete": ["Read", "Update", "Delete", "View", "Edit"],
+      "InteractiveSetDeletionMark": ["Read", "Update", "View", "Edit"],
+      "InteractiveClearDeletionMark": ["Read", "Update", "View", "Edit"],
+      "InteractiveDeleteMarked": ["Read", "Update", "Delete", "View", "Edit"],
+      "InputByString": ["Read", "View"],
+      "InteractiveDeletePredefinedData": ["Read", "Update", "Delete", "View", "Edit", "InteractiveDelete"],
+      "InteractiveSetDeletionMarkPredefinedData": ["Read", "Update", "View", "Edit", "InteractiveSetDeletionMark"],
+      "InteractiveClearDeletionMarkPredefinedData": ["Read", "Update", "View", "Edit", "InteractiveClearDeletionMark"],
+      "InteractiveDeleteMarkedPredefinedData": ["Read", "Update", "Delete", "View", "Edit", "InteractiveDeleteMarked"],
+      "ReadDataHistory": ["Read"],
+      "ReadDataHistoryOfMissingData": ["Read", "ReadDataHistory"],
+      "UpdateDataHistory": ["Read", "ReadDataHistory"],
+      "UpdateDataHistoryOfMissingData": ["Read", "ReadDataHistory", "ReadDataHistoryOfMissingData", "UpdateDataHistory"],
+      "UpdateDataHistoryVersionComment": ["Read", "ReadDataHistory"],
+      "ViewDataHistory": ["Read", "View", "ReadDataHistory"],
+      "EditDataHistoryVersionComment": ["Read", "View", "ReadDataHistory", "UpdateDataHistoryVersionComment"],
+      "SwitchToDataHistoryVersion": ["Read", "View"]
+    }
+  },
+  "Document": {
+    "rights": ["Read", "Insert", "Update", "Delete", "Posting", "UndoPosting", "View", "InteractiveInsert", "Edit", "InteractiveDelete", "InteractiveSetDeletionMark", "InteractiveClearDeletionMark", "InteractiveDeleteMarked", "InteractivePosting", "InteractivePostingRegular", "InteractiveUndoPosting", "InteractiveChangeOfPosted", "InputByString", "ReadDataHistory", "ReadDataHistoryOfMissingData", "UpdateDataHistory", "UpdateDataHistoryOfMissingData", "UpdateDataHistorySettings", "UpdateDataHistoryVersionComment", "ViewDataHistory", "EditDataHistoryVersionComment", "SwitchToDataHistoryVersion"],
+    "requires": {
+      "Insert": ["Read"],
+      "Update": ["Read"],
+      "Delete": ["Read"],
+      "Posting": ["Read", "Update"],
+      "UndoPosting": ["Read", "Update"],
+      "View": ["Read"],
+      "InteractiveInsert": ["Read", "Insert", "Update", "View", "Edit"],
+      "Edit": ["Read", "Update", "View"],
+      "InteractiveDelete": ["Read", "Update", "Delete", "View", "Edit"],
+      "InteractiveSetDeletionMark": ["Read", "Update", "View", "Edit"],
+      "InteractiveClearDeletionMark": ["Read", "Update", "View", "Edit"],
+      "InteractiveDeleteMarked": ["Read", "Update", "Delete", "View", "Edit"],
+      "InteractivePosting": ["Read", "Update", "Posting", "View", "Edit"],
+      "InteractivePostingRegular": ["Read", "Update", "Posting", "View", "Edit", "InteractivePosting"],
+      "InteractiveUndoPosting": ["Read", "Update", "UndoPosting", "View", "Edit"],
+      "InteractiveChangeOfPosted": ["Read", "Update", "View", "Edit"],
+      "InputByString": ["Read", "View"],
+      "ReadDataHistory": ["Read"],
+      "ReadDataHistoryOfMissingData": ["Read", "ReadDataHistory"],
+      "UpdateDataHistory": ["Read", "ReadDataHistory"],
+      "UpdateDataHistoryOfMissingData": ["Read", "ReadDataHistory", "ReadDataHistoryOfMissingData", "UpdateDataHistory"],
+      "UpdateDataHistoryVersionComment": ["Read", "ReadDataHistory"],
+      "ViewDataHistory": ["Read", "View", "ReadDataHistory"],
+      "EditDataHistoryVersionComment": ["Read", "View", "ReadDataHistory", "UpdateDataHistoryVersionComment"],
+      "SwitchToDataHistoryVersion": ["Read", "View"]
+    }
+  },
+  "ExchangePlan": {
+    "rights": ["Read", "Insert", "Update", "Delete", "View", "InteractiveInsert", "Edit", "InteractiveDelete", "InteractiveSetDeletionMark", "InteractiveClearDeletionMark", "InteractiveDeleteMarked", "InputByString", "ReadDataHistory", "ReadDataHistoryOfMissingData", "UpdateDataHistory", "UpdateDataHistoryOfMissingData", "UpdateDataHistorySettings", "UpdateDataHistoryVersionComment", "ViewDataHistory", "EditDataHistoryVersionComment", "SwitchToDataHistoryVersion"],
+    "requires": {
+      "Insert": ["Read"],
+      "Update": ["Read"],
+      "Delete": ["Read"],
+      "View": ["Read"],
+      "InteractiveInsert": ["Read", "Insert", "Update", "View", "Edit"],
+      "Edit": ["Read", "Update", "View"],
+      "InteractiveDelete": ["Read", "Update", "Delete", "View", "Edit"],
+      "InteractiveSetDeletionMark": ["Read", "Update", "View", "Edit"],
+      "InteractiveClearDeletionMark": ["Read", "Update", "View", "Edit"],
+      "InteractiveDeleteMarked": ["Read", "Update", "Delete", "View", "Edit"],
+      "InputByString": ["Read", "View"],
+      "ReadDataHistory": ["Read"],
+      "ReadDataHistoryOfMissingData": ["Read", "ReadDataHistory"],
+      "UpdateDataHistory": ["Read", "ReadDataHistory"],
+      "UpdateDataHistoryOfMissingData": ["Read", "ReadDataHistory", "ReadDataHistoryOfMissingData", "UpdateDataHistory"],
+      "UpdateDataHistoryVersionComment": ["Read", "ReadDataHistory"],
+      "ViewDataHistory": ["Read", "View", "ReadDataHistory"],
+      "EditDataHistoryVersionComment": ["Read", "View", "ReadDataHistory", "UpdateDataHistoryVersionComment"],
+      "SwitchToDataHistoryVersion": ["Read", "View"]
+    }
+  },
+  "ChartOfCharacteristicTypes": {
+    "rights": ["Read", "Insert", "Update", "Delete", "View", "InteractiveInsert", "Edit", "InteractiveDelete", "InteractiveSetDeletionMark", "InteractiveClearDeletionMark", "InteractiveDeleteMarked", "InputByString", "InteractiveDeletePredefinedData", "InteractiveSetDeletionMarkPredefinedData", "InteractiveClearDeletionMarkPredefinedData", "InteractiveDeleteMarkedPredefinedData", "ReadDataHistory", "ReadDataHistoryOfMissingData", "UpdateDataHistory", "UpdateDataHistoryOfMissingData", "UpdateDataHistorySettings", "UpdateDataHistoryVersionComment", "ViewDataHistory", "EditDataHistoryVersionComment", "SwitchToDataHistoryVersion"],
+    "requires": {
+      "Insert": ["Read"],
+      "Update": ["Read"],
+      "Delete": ["Read"],
+      "View": ["Read"],
+      "InteractiveInsert": ["Read", "Insert", "Update", "View", "Edit"],
+      "Edit": ["Read", "Update", "View"],
+      "InteractiveDelete": ["Read", "Update", "Delete", "View", "Edit"],
+      "InteractiveSetDeletionMark": ["Read", "Update", "View", "Edit"],
+      "InteractiveClearDeletionMark": ["Read", "Update", "View", "Edit"],
+      "InteractiveDeleteMarked": ["Read", "Update", "Delete", "View", "Edit"],
+      "InputByString": ["Read", "View"],
+      "InteractiveDeletePredefinedData": ["Read", "Update", "Delete", "View", "Edit", "InteractiveDelete"],
+      "InteractiveSetDeletionMarkPredefinedData": ["Read", "Update", "View", "Edit", "InteractiveSetDeletionMark"],
+      "InteractiveClearDeletionMarkPredefinedData": ["Read", "Update", "View", "Edit", "InteractiveClearDeletionMark"],
+      "InteractiveDeleteMarkedPredefinedData": ["Read", "Update", "Delete", "View", "Edit", "InteractiveDeleteMarked"],
+      "ReadDataHistory": ["Read"],
+      "ReadDataHistoryOfMissingData": ["Read", "ReadDataHistory"],
+      "UpdateDataHistory": ["Read", "ReadDataHistory"],
+      "UpdateDataHistoryOfMissingData": ["Read", "ReadDataHistory", "ReadDataHistoryOfMissingData", "UpdateDataHistory"],
+      "UpdateDataHistoryVersionComment": ["Read", "ReadDataHistory"],
+      "ViewDataHistory": ["Read", "View", "ReadDataHistory"],
+      "EditDataHistoryVersionComment": ["Read", "View", "ReadDataHistory", "UpdateDataHistoryVersionComment"],
+      "SwitchToDataHistoryVersion": ["Read", "View"]
+    }
+  },
+  "ChartOfAccounts": {
+    "rights": ["Read", "Insert", "Update", "Delete", "View", "InteractiveInsert", "Edit", "InteractiveDelete", "InteractiveSetDeletionMark", "InteractiveClearDeletionMark", "InteractiveDeleteMarked", "InputByString", "InteractiveDeletePredefinedData", "InteractiveSetDeletionMarkPredefinedData", "InteractiveClearDeletionMarkPredefinedData", "InteractiveDeleteMarkedPredefinedData", "ReadDataHistory", "ReadDataHistoryOfMissingData", "UpdateDataHistory", "UpdateDataHistoryOfMissingData", "UpdateDataHistorySettings", "UpdateDataHistoryVersionComment", "ViewDataHistory", "EditDataHistoryVersionComment", "SwitchToDataHistoryVersion"],
+    "requires": {
+      "Insert": ["Read"],
+      "Update": ["Read"],
+      "Delete": ["Read"],
+      "View": ["Read"],
+      "InteractiveInsert": ["Read", "Insert", "Update", "View", "Edit"],
+      "Edit": ["Read", "Update", "View"],
+      "InteractiveDelete": ["Read", "Update", "Delete", "View", "Edit"],
+      "InteractiveSetDeletionMark": ["Read", "Update", "View", "Edit"],
+      "InteractiveClearDeletionMark": ["Read", "Update", "View", "Edit"],
+      "InteractiveDeleteMarked": ["Read", "Update", "Delete", "View", "Edit"],
+      "InputByString": ["Read", "View"],
+      "InteractiveDeletePredefinedData": ["Read", "Update", "Delete", "View", "Edit", "InteractiveDelete"],
+      "InteractiveSetDeletionMarkPredefinedData": ["Read", "Update", "View", "Edit", "InteractiveSetDeletionMark"],
+      "InteractiveClearDeletionMarkPredefinedData": ["Read", "Update", "View", "Edit", "InteractiveClearDeletionMark"],
+      "InteractiveDeleteMarkedPredefinedData": ["Read", "Update", "Delete", "View", "Edit", "InteractiveDeleteMarked"],
+      "ReadDataHistoryOfMissingData": ["ReadDataHistory"],
+      "UpdateDataHistory": ["ReadDataHistory"],
+      "UpdateDataHistoryOfMissingData": ["ReadDataHistory", "ReadDataHistoryOfMissingData", "UpdateDataHistory"],
+      "UpdateDataHistoryVersionComment": ["ReadDataHistory"],
+      "ViewDataHistory": ["Read", "View", "ReadDataHistory"],
+      "EditDataHistoryVersionComment": ["Read", "View", "ReadDataHistory", "UpdateDataHistoryVersionComment"],
+      "SwitchToDataHistoryVersion": ["Read", "View"]
+    }
+  },
+  "ChartOfCalculationTypes": {
+    "rights": ["Read", "Insert", "Update", "Delete", "View", "InteractiveInsert", "Edit", "InteractiveDelete", "InteractiveSetDeletionMark", "InteractiveClearDeletionMark", "InteractiveDeleteMarked", "InputByString", "InteractiveDeletePredefinedData", "InteractiveSetDeletionMarkPredefinedData", "InteractiveClearDeletionMarkPredefinedData", "InteractiveDeleteMarkedPredefinedData", "ReadDataHistory", "ReadDataHistoryOfMissingData", "UpdateDataHistory", "UpdateDataHistoryOfMissingData", "UpdateDataHistorySettings", "UpdateDataHistoryVersionComment", "ViewDataHistory", "EditDataHistoryVersionComment", "SwitchToDataHistoryVersion"],
+    "requires": {
+      "Insert": ["Read"],
+      "Update": ["Read"],
+      "Delete": ["Read"],
+      "View": ["Read"],
+      "InteractiveInsert": ["Read", "Insert", "Update", "View", "Edit"],
+      "Edit": ["Read", "Update", "View"],
+      "InteractiveDelete": ["Read", "Update", "Delete", "View", "Edit"],
+      "InteractiveSetDeletionMark": ["Read", "Update", "View", "Edit"],
+      "InteractiveClearDeletionMark": ["Read", "Update", "View", "Edit"],
+      "InteractiveDeleteMarked": ["Read", "Update", "Delete", "View", "Edit"],
+      "InputByString": ["Read", "View"],
+      "InteractiveDeletePredefinedData": ["Read", "Update", "Delete", "View", "Edit", "InteractiveDelete"],
+      "InteractiveSetDeletionMarkPredefinedData": ["Read", "Update", "View", "Edit", "InteractiveSetDeletionMark"],
+      "InteractiveClearDeletionMarkPredefinedData": ["Read", "Update", "View", "Edit", "InteractiveClearDeletionMark"],
+      "InteractiveDeleteMarkedPredefinedData": ["Read", "Update", "Delete", "View", "Edit", "InteractiveDeleteMarked"],
+      "ReadDataHistory": ["Read"],
+      "ReadDataHistoryOfMissingData": ["Read", "ReadDataHistory"],
+      "UpdateDataHistory": ["Read", "ReadDataHistory"],
+      "UpdateDataHistoryOfMissingData": ["Read", "ReadDataHistory", "ReadDataHistoryOfMissingData", "UpdateDataHistory"],
+      "UpdateDataHistoryVersionComment": ["Read", "ReadDataHistory"],
+      "ViewDataHistory": ["Read", "View", "ReadDataHistory"],
+      "EditDataHistoryVersionComment": ["Read", "View", "ReadDataHistory", "UpdateDataHistoryVersionComment"],
+      "SwitchToDataHistoryVersion": ["Read", "View"]
+    }
+  },
+  "BusinessProcess": {
+    "rights": ["Read", "Insert", "Update", "Delete", "View", "InteractiveInsert", "Edit", "InteractiveDelete", "InteractiveSetDeletionMark", "InteractiveClearDeletionMark", "InteractiveDeleteMarked", "InputByString", "InteractiveActivate", "Start", "InteractiveStart", "ReadDataHistory", "ReadDataHistoryOfMissingData", "UpdateDataHistory", "UpdateDataHistoryOfMissingData", "UpdateDataHistorySettings", "UpdateDataHistoryVersionComment", "ViewDataHistory", "EditDataHistoryVersionComment", "SwitchToDataHistoryVersion"],
+    "requires": {
+      "Insert": ["Read"],
+      "Update": ["Read"],
+      "Delete": ["Read"],
+      "View": ["Read"],
+      "InteractiveInsert": ["Read", "Insert", "Update", "View", "Edit"],
+      "Edit": ["Read", "Update", "View"],
+      "InteractiveDelete": ["Read", "Update", "Delete", "View", "Edit"],
+      "InteractiveSetDeletionMark": ["Read", "Update", "View", "Edit"],
+      "InteractiveClearDeletionMark": ["Read", "Update", "View", "Edit"],
+      "InteractiveDeleteMarked": ["Read", "Update", "Delete", "View", "Edit"],
+      "InputByString": ["Read", "View"],
+      "InteractiveActivate": ["Read", "Update"],
+      "Start": ["Read", "Update"],
+      "InteractiveStart": ["Read", "Update", "Start"],
+      "ReadDataHistory": ["Read"],
+      "ReadDataHistoryOfMissingData": ["Read", "ReadDataHistory"],
+      "UpdateDataHistory": ["Read", "ReadDataHistory"],
+      "UpdateDataHistoryOfMissingData": ["Read", "ReadDataHistory", "ReadDataHistoryOfMissingData", "UpdateDataHistory"],
+      "UpdateDataHistoryVersionComment": ["Read", "ReadDataHistory"],
+      "ViewDataHistory": ["Read", "View", "ReadDataHistory"],
+      "EditDataHistoryVersionComment": ["Read", "View", "ReadDataHistory", "UpdateDataHistoryVersionComment"],
+      "SwitchToDataHistoryVersion": ["Read", "View"]
+    }
+  },
+  "Task": {
+    "rights": ["Read", "Insert", "Update", "Delete", "View", "InteractiveInsert", "Edit", "InteractiveDelete", "InteractiveSetDeletionMark", "InteractiveClearDeletionMark", "InteractiveDeleteMarked", "InputByString", "InteractiveActivate", "Execute", "InteractiveExecute", "ReadDataHistory", "ReadDataHistoryOfMissingData", "UpdateDataHistory", "UpdateDataHistoryOfMissingData", "UpdateDataHistorySettings", "UpdateDataHistoryVersionComment", "ViewDataHistory", "EditDataHistoryVersionComment", "SwitchToDataHistoryVersion"],
+    "requires": {
+      "Insert": ["Read"],
+      "Update": ["Read"],
+      "Delete": ["Read"],
+      "View": ["Read"],
+      "InteractiveInsert": ["Read", "Insert", "Update", "View", "Edit"],
+      "Edit": ["Read", "Update", "View"],
+      "InteractiveDelete": ["Read", "Update", "Delete", "View", "Edit"],
+      "InteractiveSetDeletionMark": ["Read", "Update", "View", "Edit"],
+      "InteractiveClearDeletionMark": ["Read", "Update", "View", "Edit"],
+      "InteractiveDeleteMarked": ["Read", "Update", "Delete", "View", "Edit"],
+      "InputByString": ["Read", "View"],
+      "InteractiveActivate": ["Read", "Update"],
+      "Execute": ["Read", "Update"],
+      "InteractiveExecute": ["Read", "Update", "Execute"],
+      "ReadDataHistory": ["Read"],
+      "ReadDataHistoryOfMissingData": ["Read", "ReadDataHistory"],
+      "UpdateDataHistory": ["Read", "ReadDataHistory"],
+      "UpdateDataHistoryOfMissingData": ["Read", "ReadDataHistory", "ReadDataHistoryOfMissingData", "UpdateDataHistory"],
+      "UpdateDataHistoryVersionComment": ["Read", "ReadDataHistory"],
+      "ViewDataHistory": ["Read", "View", "ReadDataHistory"],
+      "EditDataHistoryVersionComment": ["Read", "View", "ReadDataHistory", "UpdateDataHistoryVersionComment"],
+      "SwitchToDataHistoryVersion": ["Read", "View"]
+    }
+  },
+  "Constant": {
+    "rights": ["Read", "Update", "View", "Edit", "ReadDataHistory", "UpdateDataHistory", "UpdateDataHistorySettings", "UpdateDataHistoryVersionComment", "ViewDataHistory", "EditDataHistoryVersionComment", "SwitchToDataHistoryVersion"],
+    "requires": {
+      "Update": ["Read"],
+      "View": ["Read"],
+      "Edit": ["Read", "Update", "View"],
+      "ReadDataHistory": ["Read"],
+      "UpdateDataHistory": ["Read", "ReadDataHistory"],
+      "UpdateDataHistoryVersionComment": ["Read", "ReadDataHistory"],
+      "ViewDataHistory": ["Read", "View", "ReadDataHistory"],
+      "EditDataHistoryVersionComment": ["Read", "View", "ReadDataHistory", "UpdateDataHistoryVersionComment"],
+      "SwitchToDataHistoryVersion": ["Read", "View"]
+    }
+  },
+  "InformationRegister": {
+    "rights": ["Read", "Update", "View", "Edit", "TotalsControl", "ReadDataHistory", "ReadDataHistoryOfMissingData", "UpdateDataHistory", "UpdateDataHistoryOfMissingData", "UpdateDataHistorySettings", "UpdateDataHistoryVersionComment", "ViewDataHistory", "EditDataHistoryVersionComment", "SwitchToDataHistoryVersion"],
+    "requires": {
+      "Update": ["Read"],
+      "View": ["Read"],
+      "Edit": ["Read", "Update", "View"],
+      "ReadDataHistory": ["Read"],
+      "ReadDataHistoryOfMissingData": ["Read", "ReadDataHistory"],
+      "UpdateDataHistory": ["Read", "ReadDataHistory"],
+      "UpdateDataHistoryOfMissingData": ["Read", "ReadDataHistory", "UpdateDataHistory"],
+      "UpdateDataHistoryVersionComment": ["Read", "ReadDataHistory"],
+      "ViewDataHistory": ["Read", "View", "ReadDataHistory"],
+      "EditDataHistoryVersionComment": ["Read", "View", "ReadDataHistory", "UpdateDataHistoryVersionComment"],
+      "SwitchToDataHistoryVersion": ["Read", "View"]
+    }
+  },
+  "AccumulationRegister": {
+    "rights": ["Read", "Update", "View", "Edit", "TotalsControl"],
+    "requires": {
+      "Update": ["Read"],
+      "View": ["Read"],
+      "Edit": ["Read", "Update", "View"]
+    }
+  },
+  "AccountingRegister": {
+    "rights": ["Read", "Update", "View", "Edit", "TotalsControl"],
+    "requires": {
+      "Update": ["Read"],
+      "View": ["Read"],
+      "Edit": ["Read", "Update", "View"]
+    }
+  },
+  "CalculationRegister": {
+    "rights": ["Read", "Update", "View", "Edit"],
+    "requires": {
+      "Update": ["Read"],
+      "View": ["Read"],
+      "Edit": ["Read", "Update", "View"]
+    }
+  },
+  "Sequence": {
+    "rights": ["Read", "Update"],
+    "requires": {
+      "Update": ["Read"]
+    }
+  },
+  "DocumentJournal": {
+    "rights": ["Read", "View"],
+    "requires": {
+      "View": ["Read"]
+    }
+  },
+  "Report": {
+    "rights": ["Use", "View"],
+    "requires": {
+      "View": ["Use"]
+    }
+  },
+  "DataProcessor": {
+    "rights": ["Use", "View"],
+    "requires": {
+      "View": ["Use"]
+    }
+  },
+  "CommonForm": {
+    "rights": ["View"],
+    "requires": {}
+  },
+  "CommonCommand": {
+    "rights": ["View"],
+    "requires": {}
+  },
+  "Subsystem": {
+    "rights": ["View"],
+    "requires": {}
+  },
+  "SessionParameter": {
+    "rights": ["Get", "Set"],
+    "requires": {}
+  },
+  "CommonAttribute": {
+    "rights": ["View", "Edit"],
+    "requires": {
+      "Edit": ["View"]
+    }
+  },
+  "FilterCriterion": {
+    "rights": ["View"],
+    "requires": {}
+  },
+  "ExternalDataSource": {
+    "rights": ["Use", "Administration", "StandardAuthenticationChange", "SessionStandardAuthenticationChange", "SessionOSAuthenticationChange"],
+    "requires": {}
+  }
+}

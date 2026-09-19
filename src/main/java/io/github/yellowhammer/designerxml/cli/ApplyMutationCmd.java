@@ -49,6 +49,7 @@ import io.github.yellowhammer.designerxml.cf.MdObjectChildMutations;
 import io.github.yellowhammer.designerxml.cf.MdObjectPropertiesDto;
 import io.github.yellowhammer.designerxml.cf.MdObjectPropertiesEdit;
 import io.github.yellowhammer.designerxml.cf.NewExternalArtifactXml;
+import io.github.yellowhammer.designerxml.cf.ObjectRights;
 import jakarta.xml.bind.JAXBException;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
@@ -93,6 +94,11 @@ final class ApplyMutationCmd implements Callable<Integer> {
   static final class RoleRightsPayload {
     java.util.List<RoleRightsFile.Edit> edits;
     java.util.Map<String, Boolean> flags;
+  }
+
+  /** Полезная нагрузка cf-object-rights-set: правки прав ролей на объект. */
+  static final class ObjectRightsPayload {
+    java.util.List<ObjectRights.Edit> edits;
   }
 
   @Option(
@@ -521,6 +527,13 @@ final class ApplyMutationCmd implements Callable<Integer> {
         if (payload.edits != null && !payload.edits.isEmpty()) {
           RoleRightsFile.applyEdits(roleXml, payload.edits);
         }
+        return "OK";
+      }
+      case "cf-object-rights-set": {
+        // payload: {"edits":[{role,right,value}...]}
+        ObjectRightsPayload payload = new Gson().fromJson(
+          p.req(p.payloadJson, "payloadJson"), ObjectRightsPayload.class);
+        ObjectRights.apply(p.reqPath(p.objectXml, "objectXml"), payload == null ? null : payload.edits);
         return "OK";
       }
       case "cf-support-object-mode-set": {

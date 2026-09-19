@@ -28,6 +28,8 @@ import io.github.yellowhammer.designerxml.cf.EnumValueLabels;
 import io.github.yellowhammer.designerxml.cf.ExchangePlanContentFile;
 import io.github.yellowhammer.designerxml.cf.SubsystemCommandInterfaceFile;
 import io.github.yellowhammer.designerxml.cf.DcsRead;
+import io.github.yellowhammer.designerxml.cf.ObjectRights;
+import io.github.yellowhammer.designerxml.cf.RoleRightsCatalog;
 import io.github.yellowhammer.designerxml.cf.RoleRightsFile;
 import io.github.yellowhammer.designerxml.cf.SupportRules;
 import io.github.yellowhammer.designerxml.cf.UiLabels;
@@ -156,6 +158,7 @@ final class ReadJsonCmd implements Callable<Integer> {
     "cf-list-all-child-objects",
     "cf-list-ref-types",
     "cf-role-rights-get",
+    "cf-object-rights-get",
     "cf-md-exchange-plan-content-get",
     "cf-md-subsystem-command-interface-get",
     "external-artifact-properties-get",
@@ -266,6 +269,7 @@ final class ReadJsonCmd implements Callable<Integer> {
         labels.put("values", EnumValueLabels.all());
         labels.put("byProperty", EnumValueLabels.byProperty());
         labels.put("rights", UiLabels.rights());
+        labels.put("rightsByKind", RoleRightsCatalog.rightsByKind());
         labels.put("commandGroups", UiLabels.commandGroups());
         labels.put("objectStandardCommands", UiLabels.objectStandardCommands());
         labels.put("objectKinds", UiLabels.objectKinds());
@@ -331,6 +335,9 @@ final class ReadJsonCmd implements Callable<Integer> {
       }
       case "cf-role-rights-get": {
         return gson.toJson(RoleRightsFile.read(p.reqPath(p.objectXml, "objectXml")));
+      }
+      case "cf-object-rights-get": {
+        return gson.toJson(ObjectRights.read(p.reqPath(p.objectXml, "objectXml")));
       }
       case "cf-dcs-info": {
         return gson.toJson(DcsRead.info(p.reqPath(p.objectXml, "objectXml"), p.version()));

@@ -17,6 +17,12 @@ public final class MdObjectStructureDto {
   public String internalName;
   public List<MdNodeDto> attributes;
   public List<MdTabularSectionDto> tabularSections;
+  /**
+   * Стандартные табличные части: виды субконто плана счетов, базовые, ведущие и вытесняющие виды
+   * расчёта плана видов расчёта. Синоним и подписи стандартных реквизитов без переопределения
+   * берутся у платформы из {@link StandardAttributeLabels}.
+   */
+  public List<MdTabularSectionDto> standardTabularSections;
   /** Формы объекта: вид и файл содержимого нужны, чтобы знать, чем форму открывать. */
   public List<MdFormDto> forms;
   public List<String> commands;
@@ -63,6 +69,7 @@ public final class MdObjectStructureDto {
   public MdObjectStructureDto() {
     this.attributes = new ArrayList<>();
     this.tabularSections = new ArrayList<>();
+    this.standardTabularSections = new ArrayList<>();
     this.forms = new ArrayList<>();
     this.commands = new ArrayList<>();
     this.templates = new ArrayList<>();

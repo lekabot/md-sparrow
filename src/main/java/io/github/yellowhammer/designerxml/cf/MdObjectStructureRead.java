@@ -119,6 +119,7 @@ public final class MdObjectStructureRead {
 
     dto.standardAttributeSynonyms.putAll(StandardAttributeLabels.ofObject(dto.kind));
     readStandardAttributes(props, dto.standardAttributes, dto.standardAttributeSynonyms);
+    readStandardTabularSections(props, dto);
 
     Object childObjects = invokeNoArgOrNull(handle.objectNode, "getChildObjects");
     if (childObjects == null) {
@@ -211,6 +212,38 @@ public final class MdObjectStructureRead {
       if (synonym != null && !synonym.isEmpty()) {
         synonyms.put(name, synonym);
       }
+    }
+  }
+
+  /**
+   * Стандартные табличные части объекта: состав задаёт платформа, а перечисляет их сам файл.
+   *
+   * <p>Синоним части и её стандартных реквизитов лежит в файле только переопределённым, иначе
+   * остаётся подпись платформы.
+   *
+   * @param props узел {@code Properties} объекта
+   * @param dto   сюда складываются части
+   */
+  private static void readStandardTabularSections(Object props, MdObjectStructureDto dto) {
+    Object sections = invokeNoArgOrNull(props, "getStandardTabularSections");
+    if (sections == null) {
+      return;
+    }
+    for (Object item : listOrEmpty(invokeNoArgOrNull(sections, "getStandardTabularSection"))) {
+      String name = safeString(invokeNoArgOrNull(item, "getName"));
+      if (name.isEmpty()) {
+        continue;
+      }
+      MdObjectStructureDto.MdTabularSectionDto section = new MdObjectStructureDto.MdTabularSectionDto();
+      section.name = name;
+      String synonym = LocalStringSync.first(invokeNoArgOrNull(item, "getSynonym"));
+      section.synonym = synonym.isEmpty()
+        ? StandardAttributeLabels.standardTabularSectionLabel(dto.kind, name)
+        : synonym;
+      section.comment = safeString(invokeNoArgOrNull(item, "getComment"));
+      section.standardAttributeSynonyms.putAll(StandardAttributeLabels.ofStandardTabularSection(dto.kind, name));
+      readStandardAttributes(item, section.standardAttributes, section.standardAttributeSynonyms);
+      dto.standardTabularSections.add(section);
     }
   }
 
