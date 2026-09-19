@@ -100,7 +100,7 @@ public final class MdObjectPropertiesDiff {
     if (!namedListEquals(a.dimensions, b.dimensions) || !namedListEquals(a.resources, b.resources)) {
       return false;
     }
-    if (!namedListEquals(a.dimensions, b.dimensions) || !namedListEquals(a.resources, b.resources)) {
+    if (!namedChildrenEqual(a, b)) {
       return false;
     }
     if (!listStringEquals(a.nestedSubsystems, b.nestedSubsystems)) {
@@ -160,6 +160,10 @@ public final class MdObjectPropertiesDiff {
     if (!namedListNamesOnly(v.attributes, e.attributes) || !namedListNamesOnly(v.tabularSections, e.tabularSections)) {
       return false;
     }
+    // Прочие узлы состава JAXB-запись не переносит: их правка проходит только точечной записью
+    if (!namedChildrenEqual(v, e)) {
+      return false;
+    }
     if (!listStringEquals(v.nestedSubsystems, e.nestedSubsystems)
       || !listStringEquals(v.contentRefs, e.contentRefs)) {
       return false;
@@ -172,7 +176,7 @@ public final class MdObjectPropertiesDiff {
     return e.catalog == null && v.catalog == null;
   }
 
-  private static boolean namedListNamesOnly(List<MdNamedPropertyDto> a, List<MdNamedPropertyDto> b) {
+  static boolean namedListNamesOnly(List<MdNamedPropertyDto> a, List<MdNamedPropertyDto> b) {
     if (a == null) {
       a = new ArrayList<>();
     }
@@ -233,6 +237,12 @@ public final class MdObjectPropertiesDiff {
       return false;
     }
     if (!namedListEquals(a.enumValues, b.enumValues)) {
+      return false;
+    }
+    if (!namedListEquals(a.dimensions, b.dimensions) || !namedListEquals(a.resources, b.resources)) {
+      return false;
+    }
+    if (!namedChildrenEqual(a, b)) {
       return false;
     }
     if (!listStringEquals(a.nestedSubsystems, b.nestedSubsystems)) {
@@ -624,6 +634,16 @@ public final class MdObjectPropertiesDiff {
       Object other = b.get(entry.getKey());
       String right = other == null ? "" : String.valueOf(other);
       if (!left.equals(right)) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  /** Прочие узлы состава: команды, графы, каналы и остальные виды. */
+  private static boolean namedChildrenEqual(MdObjectPropertiesDto a, MdObjectPropertiesDto b) {
+    for (MdObjectPropertiesEdit.NamedChildDef def : MdObjectPropertiesEdit.NAMED_CHILDREN) {
+      if (!namedListEquals(def.target().apply(a), def.target().apply(b))) {
         return false;
       }
     }
