@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mdclass:Catalog xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:core="http://g5.1c.ru/v8/dt/mcore" xmlns:mdclass="http://g5.1c.ru/v8/dt/metadata/mdclass" uuid="93b87574-f379-39e5-94a8-c258efd2a608">
+  <producedTypes>
+    <objectType typeId="fdcf7ae9-76e0-3387-9b5e-027a5ca8ada9" valueTypeId="bce43ed4-1129-3ee9-ab95-a10b2e0680a3"/>
+    <refType typeId="57977ee7-ddef-3a1d-874d-19287638b5db" valueTypeId="3fb9f484-81d8-3827-91d0-a86581374a5d"/>
+    <selectionType typeId="94196a6c-c5b9-38b7-86c3-2389159e927a" valueTypeId="c405c82a-e8ab-3f78-ada2-57695fbf7833"/>
+    <listType typeId="4ff66912-f440-3910-82a1-acfdf3f6d249" valueTypeId="0acf3031-640b-34c0-ab70-5d17523e8298"/>
+    <managerType typeId="7c6c5828-0051-3a40-897b-171da44dd69a" valueTypeId="3eae5837-1475-3439-99bb-fe2a921094f3"/>
+  </producedTypes>
+  <name>Товары</name>
+  <synonym>
+    <key>ru</key>
+    <value>Товары</value>
+  </synonym>
+  <useStandardCommands>true</useStandardCommands>
+  <inputByString>Catalog.Товары.StandardAttribute.Description</inputByString>
+  <inputByString>Catalog.Товары.StandardAttribute.Code</inputByString>
+  <fullTextSearchOnInputByString>DontUse</fullTextSearchOnInputByString>
+  <createOnInput>Use</createOnInput>
+  <dataLockControlMode>Managed</dataLockControlMode>
+  <fullTextSearch>Use</fullTextSearch>
+  <objectPresentation>
+    <key>ru</key>
+    <value>Товары</value>
+  </objectPresentation>
+  <extendedObjectPresentation>
+    <key>ru</key>
+    <value>Товары</value>
+  </extendedObjectPresentation>
+  <listPresentation>
+    <key>ru</key>
+    <value>Товары</value>
+  </listPresentation>
+  <extendedListPresentation>
+    <key>ru</key>
+    <value>Товары</value>
+  </extendedListPresentation>
+  <explanation>
+    <key>ru</key>
+    <value>Товары</value>
+  </explanation>
+  <levelCount>2</levelCount>
+  <foldersOnTop>true</foldersOnTop>
+  <codeLength>9</codeLength>
+  <descriptionLength>25</descriptionLength>
+  <codeType>String</codeType>
+  <codeAllowedLength>Variable</codeAllowedLength>
+  <checkUnique>true</checkUnique>
+  <autonumbering>true</autonumbering>
+  <defaultPresentation>AsDescription</defaultPresentation>
+  <editType>InDialog</editType>
+  <choiceMode>BothWays</choiceMode>
+  <attributes uuid="427391ca-edc3-4684-adfd-089e8458e886">
+    <name>Цена</name>
+    <synonym>
+      <key>ru</key>
+      <value>Цена</value>
+    </synonym>
+    <type>
+      <types>String</types>
+      <stringQualifiers>
+        <length>10</length>
+      </stringQualifiers>
+    </type>
+    <minValue xsi:type="core:UndefinedValue"/>
+    <maxValue xsi:type="core:UndefinedValue"/>
+    <fillValue xsi:type="core:StringValue"/>
+    <fullTextSearch>Use</fullTextSearch>
+    <dataHistory>Use</dataHistory>
+  </attributes>
+</mdclass:Catalog>

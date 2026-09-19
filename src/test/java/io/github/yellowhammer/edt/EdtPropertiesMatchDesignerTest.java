@@ -198,6 +198,29 @@ class EdtPropertiesMatchDesignerTest {
     assertThat(mismatches).as("расхождения строения").isEmpty();
   }
 
+  @Test
+  void стандартныеТабличныеЧастиСовпадают() throws Exception {
+    for (String object : List.of(
+        "ChartsOfAccounts/_ДемоОсновной", "ChartsOfCalculationTypes/_ДемоОсновныеНачисления")) {
+      String name = object.substring(object.indexOf('/') + 1);
+      MdObjectStructureDto edt = EdtObjectStructure.read(edtSource.resolve(object).resolve(name + ".mdo"), model);
+      MdObjectStructureDto designer = MdObjectStructureRead.read(designerCf.resolve(object + ".xml"), SchemaVersion.V2_21);
+
+      assertThat(standardTabularSections(edt)).as(object)
+          .isNotEmpty()
+          .isEqualTo(standardTabularSections(designer));
+    }
+  }
+
+  /** Стандартные табличные части с подписями: порядок частей и подписей у форматов свой. */
+  private static List<String> standardTabularSections(MdObjectStructureDto dto) {
+    return dto.standardTabularSections.stream()
+        .map(section -> section.name + ": " + section.synonym + " "
+            + new java.util.TreeMap<>(section.standardAttributeSynonyms))
+        .sorted()
+        .toList();
+  }
+
   /** Описания типов в свойствах вида объекта: тип константы, источник подписки. */
   private static Map<String, String> objectTypes(MdObjectPropertiesDto dto) throws ReflectiveOperationException {
     Map<String, String> types = new java.util.TreeMap<>();

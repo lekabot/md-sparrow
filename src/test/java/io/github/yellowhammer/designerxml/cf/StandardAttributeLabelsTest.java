@@ -60,7 +60,8 @@ class StandardAttributeLabelsTest {
       .containsEntry("Started", "Стартован")
       .containsEntry("HeadTask", "Ведущая задача");
     assertThat(StandardAttributeLabels.ofObject("exchangePlan"))
-      .containsEntry("SentNo", "Номер отправленного сообщения");
+      .containsEntry("SentNo", "Номер отправленного сообщения")
+      .containsEntry("ExchangeDate", "Дата актуальности");
     assertThat(StandardAttributeLabels.ofObject("chartOfAccounts"))
       .containsEntry("OffBalance", "Забалансовый")
       .containsEntry("Order", "Порядок");
@@ -122,6 +123,31 @@ class StandardAttributeLabelsTest {
     assertThat(document.tabularSections).isNotEmpty();
     assertThat(document.tabularSections.get(0).standardAttributeSynonyms)
       .containsEntry("LineNumber", "N");
+  }
+
+  @Test
+  void структураОбъектаВыгрузкиОтдаётСтандартныеТабличныеЧасти() throws Exception {
+    MdObjectStructureDto accounts = structure("ChartsOfAccounts", "_ДемоОсновной");
+    assertThat(accounts.standardTabularSections).singleElement().satisfies(section -> {
+      assertThat(section.name).isEqualTo("ExtDimensionTypes");
+      assertThat(section.synonym).isEqualTo("Виды субконто");
+      assertThat(section.standardAttributes).contains("TurnoversOnly", "ExtDimensionType");
+      assertThat(section.standardAttributeSynonyms)
+        .containsEntry("TurnoversOnly", "Только обороты")
+        .containsEntry("ExtDimensionType", "Вид субконто");
+    });
+
+    MdObjectStructureDto calculationTypes = structure("ChartsOfCalculationTypes", "_ДемоОсновныеНачисления");
+    assertThat(calculationTypes.standardTabularSections)
+      .extracting(section -> section.name + ": " + section.synonym)
+      .containsExactlyInAnyOrder(
+        "BaseCalculationTypes: Базовые виды расчета",
+        "LeadingCalculationTypes: Ведущие виды расчета",
+        "DisplacingCalculationTypes: Вытесняющие виды расчета");
+    assertThat(calculationTypes.standardTabularSections)
+      .allSatisfy(section -> assertThat(section.standardAttributeSynonyms).containsEntry("CalculationType", "Вид расчета"));
+
+    assertThat(structure("Catalogs", "_ДемоБанковскиеСчета").standardTabularSections).isEmpty();
   }
 
   /** Переопределённый синоним из файла подпись платформы вытесняет. */

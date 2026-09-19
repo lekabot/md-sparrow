@@ -1,0 +1,102 @@
+/*
+ * This file is a part of md-sparrow.
+ *
+ * Copyright (c) 2026
+ * Ivan Karlo <i.karlo@outlook.com> and contributors
+ *
+ * SPDX-License-Identifier: LGPL-3.0-or-later
+ */
+package io.github.yellowhammer.designerxml.cf;
+
+import com.google.gson.Gson;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+
+/**
+ * Права, которые платформа принимает у объекта каждого вида, и связи между ними.
+ *
+ * <p>Набора прав нет в XSD выгрузки: он снят с платформы загрузкой роли со всеми
+ * правами и выгрузкой обратно. Лишнее право платформа молча отбрасывает, порядок
+ * прав в выгрузке - её собственный.
+ *
+ * <p>Связи сняты так же: роль с одним правом платформа дополняет всеми, без которых
+ * оно не действует ({@code requires}), а снятое право снимает все, что от него зависят.
+ */
+public final class RoleRightsCatalog {
+
+  private static final String RESOURCE = "role-rights.json";
+  private static final Map<String, Kind> KINDS = load();
+
+  private RoleRightsCatalog() {
+  }
+
+  /**
+   * Права вида объекта.
+   *
+   * @param rights права в порядке выгрузки
+   * @param requires право -> права, которые платформа выдаёт вместе с ним
+   */
+  public record Kind(List<String> rights, Map<String, List<String>> requires) {
+  }
+
+  /** Права вида; {@code null}, если прав у вида нет или они не сняты с платформы. */
+  public static Kind kind(String objectKind) {
+    return KINDS.get(objectKind);
+  }
+
+  /** Виды, у которых есть права, и их права в порядке платформы. */
+  public static Map<String, List<String>> rightsByKind() {
+    Map<String, List<String>> out = new LinkedHashMap<>();
+    KINDS.forEach((kind, value) -> out.put(kind, value.rights()));
+    return out;
+  }
+
+  private static Map<String, Kind> load() {
+    try (InputStream stream = RoleRightsCatalog.class.getResourceAsStream(RESOURCE)) {
+      if (stream == null) {
+        throw new IllegalStateException("не найден ресурс " + RESOURCE);
+      }
+      try (Reader reader = new InputStreamReader(stream, StandardCharsets.UTF_8)) {
+        JsonObject root = new Gson().fromJson(reader, JsonObject.class);
+        Map<String, Kind> out = new LinkedHashMap<>();
+        for (String kind : root.keySet()) {
+          JsonObject node = root.getAsJsonObject(kind);
+          List<String> rights = strings(node.getAsJsonArray("rights"));
+          Map<String, List<String>> requires = new LinkedHashMap<>();
+          JsonObject links = node.getAsJsonObject("requires");
+          if (links != null) {
+            for (String right : links.keySet()) {
+              requires.put(right, strings(links.getAsJsonArray(right)));
+            }
+          }
+          out.put(kind, new Kind(List.copyOf(rights), Collections.unmodifiableMap(requires)));
+        }
+        return Collections.unmodifiableMap(out);
+      }
+    } catch (IOException e) {
+      throw new IllegalStateException("не прочитан ресурс " + RESOURCE, e);
+    }
+  }
+
+  private static List<String> strings(JsonArray array) {
+    List<String> out = new ArrayList<>();
+    if (array != null) {
+      for (JsonElement item : array) {
+        out.add(item.getAsString());
+      }
+    }
+    return out;
+  }
+}

@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mdclass:Configuration xmlns:mdclass="http://g5.1c.ru/v8/dt/metadata/mdclass" uuid="4c8dcf50-46db-36c5-9c03-8d8348faee4a">
+  <name>Склад</name>
+  <containedObjects classId="9cd510cd-abfc-11d4-9434-004095e12fc7" objectId="c06f9e40-939f-35ec-be05-608f5de46316"/>
+  <containedObjects classId="9fcd25a0-4822-11d4-9414-008048da11f9" objectId="ef2e7797-4bec-3672-86d6-4e6246e42cf1"/>
+  <containedObjects classId="e3687481-0a87-462c-a166-9f34594f9bba" objectId="c4270801-7850-3289-8164-f26e5544e8f5"/>
+  <containedObjects classId="9de14907-ec23-4a07-96f0-85521cb6b53b" objectId="7cf7608c-f406-3509-b09a-e253f4b5b126"/>
+  <containedObjects classId="51f2d5d8-ea4d-4064-8892-82951750031e" objectId="6a1d2520-8c95-35b6-ad8a-11a676c7a853"/>
+  <containedObjects classId="e68182ea-4237-4383-967f-90c1e3370bc7" objectId="fc863e57-4106-3f89-877b-4afd266863e8"/>
+  <containedObjects classId="fb282519-d103-4dd3-bc12-cb271d631dfc" objectId="15765832-81fe-3e53-8003-27dee67ab4b0"/>
+  <configurationExtensionCompatibilityMode>8.3.27</configurationExtensionCompatibilityMode>
+  <defaultRunMode>ManagedApplication</defaultRunMode>
+  <scriptVariant>Russian</scriptVariant>
+  <usedMobileApplicationFunctionalities>
+    <functionality>
+      <use>true</use>
+    </functionality>
+    <functionality>
+      <functionality>OSBackup</functionality>
+      <use>true</use>
+    </functionality>
+  </usedMobileApplicationFunctionalities>
+  <defaultLanguage>Language.Русский</defaultLanguage>
+  <dataLockControlMode>Managed</dataLockControlMode>
+  <objectAutonumerationMode>NotAutoFree</objectAutonumerationMode>
+  <modalityUseMode>DontUse</modalityUseMode>
+  <synchronousPlatformExtensionAndAddInCallUseMode>DontUse</synchronousPlatformExtensionAndAddInCallUseMode>
+  <compatibilityMode>8.3.12</compatibilityMode>
+  <languages uuid="fbdffaac-b7c1-3255-93fa-8d1e39ad54a2">
+    <name>Русский</name>
+    <synonym>
+      <key>ru</key>
+      <value>Русский</value>
+    </synonym>
+    <languageCode>ru</languageCode>
+  </languages>
+  <roles>Role.Администратор</roles>
+  <roles>Role.Кладовщик</roles>
+  <roles>Role.Гость</roles>
+  <catalogs>Catalog.Товары</catalogs>
+  <catalogs>Catalog.ТоварыПоставщиков</catalogs>
+  <catalogs>Catalog.Склады</catalogs>
+  <documents>Document.Заказ</documents>
+</mdclass:Configuration>
