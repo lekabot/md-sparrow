@@ -74,6 +74,7 @@ import io.github.yellowhammer.designerxml.cf.StandardCommandLabels;
 import io.github.yellowhammer.designerxml.cf.SubsystemTreeBuilder;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
+import picocli.CommandLine.ParentCommand;
 
 import java.util.Map;
 import java.io.IOException;
@@ -102,11 +103,14 @@ final class ReadJsonCmd implements Callable<Integer> {
   )
   Path paramsFile;
 
+  @ParentCommand
+  DesignerXmlCli root;
+
   @Override
   public Integer call() {
     CliParams p;
     try {
-      p = CliParams.read(paramsFile);
+      p = CliParams.read(paramsFile, root::path);
     } catch (JsonSyntaxException e) {
       System.err.println("некорректный JSON параметров: " + e.getMessage());
       return 2;

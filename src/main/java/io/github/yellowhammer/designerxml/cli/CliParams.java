@@ -30,6 +30,7 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.function.Function;
 
 /**
  * Параметры команд {@code apply-mutation}/{@code read-json}, читаемые из UTF-8 JSON-файла.
@@ -103,13 +104,21 @@ final class CliParams {
 
   String payloadJson;
 
-  /** Читает параметры из UTF-8 JSON-файла. */
-  static CliParams read(Path paramsFile) throws IOException, JsonSyntaxException {
+  /** Путь из значения поля: относительный считается от рабочего каталога команды. */
+  private transient Function<String, Path> paths = Path::of;
+
+  /**
+   * Читает параметры из UTF-8 JSON-файла.
+   *
+   * @param paths путь из значения поля
+   */
+  static CliParams read(Path paramsFile, Function<String, Path> paths) throws IOException, JsonSyntaxException {
     String json = Files.readString(paramsFile, StandardCharsets.UTF_8);
     CliParams p = new Gson().fromJson(json, CliParams.class);
     if (p == null || p.op == null || p.op.isBlank()) {
       throw new IllegalArgumentException("в параметрах не задан op");
     }
+    p.paths = paths;
     return p;
   }
 
@@ -120,8 +129,12 @@ final class CliParams {
     return value;
   }
 
+  Path path(String value) {
+    return paths.apply(value);
+  }
+
   Path reqPath(String value, String field) {
-    return Path.of(req(value, field));
+    return path(req(value, field));
   }
 
   SchemaVersion version() {

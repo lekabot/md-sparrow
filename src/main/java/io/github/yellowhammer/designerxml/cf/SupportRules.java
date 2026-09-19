@@ -70,6 +70,11 @@ public final class SupportRules {
     return enforced;
   }
 
+  /** Забывает разобранные правила: следующее чтение пойдёт с диска. */
+  public static void forget() {
+    CACHE.clear();
+  }
+
   private SupportRules() {
   }
 

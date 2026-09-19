@@ -8,6 +8,7 @@
  */
 package io.github.yellowhammer.designerxml.cf;
 
+import io.github.yellowhammer.designerxml.Cancellation;
 import io.github.yellowhammer.designerxml.SchemaVersion;
 
 import jakarta.xml.bind.JAXBException;
@@ -65,6 +66,7 @@ public final class SubsystemTreeBuilder {
 
   private static SubsystemNodeDto readNode(Path xml, SchemaVersion version, Set<Path> visited)
     throws JAXBException, IOException {
+    Cancellation.checkpoint();
     Path normalized = xml.toAbsolutePath().normalize();
     if (!Files.isRegularFile(normalized) || !visited.add(normalized)) {
       return null;

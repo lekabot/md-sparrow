@@ -5,6 +5,7 @@
  */
 package io.github.yellowhammer.designerxml.cf;
 
+import io.github.yellowhammer.designerxml.Cancellation;
 import io.github.yellowhammer.designerxml.SchemaVersion;
 import io.github.yellowhammer.edt.EdtLayout;
 import io.github.yellowhammer.edt.EdtProjectMetadataTree;
@@ -283,6 +284,7 @@ public final class ProjectMetadataTreeBuilder {
     boolean readBelonging,
     SupportRules.Rules supportRules
   ) {
+    Cancellation.checkpoint();
     // Шапка объекта читается один раз: из неё и принадлежность, и синоним, и режим поддержки
     ObjectHead.Head head = relativePath == null || relativePath.isEmpty()
         ? ObjectHead.Head.EMPTY

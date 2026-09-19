@@ -84,18 +84,35 @@ public final class EdtModel {
   /** Версия EDT, чьи схемы попали в сборку. */
   private final String version;
 
+  /** Метамодель из сборки: загружается один раз на процесс. */
+  private static volatile EdtModel bundled;
+
   private EdtModel(Map<String, EPackage> packages, String version) {
     this.packages = packages;
     this.version = version;
   }
 
   /**
-   * Загружает метамодель из схем, попавших в сборку.
+   * Метамодель из схем, попавших в сборку.
    *
    * @return метамодель метаданных EDT
    * @throws IOException если схем в сборке нет или они не читаются
    */
   public static EdtModel bundled() throws IOException {
+    EdtModel model = bundled;
+    if (model == null) {
+      synchronized (EdtModel.class) {
+        model = bundled;
+        if (model == null) {
+          model = loadBundled();
+          bundled = model;
+        }
+      }
+    }
+    return model;
+  }
+
+  private static EdtModel loadBundled() throws IOException {
     ResourceSet schemaSet = new ResourceSetImpl();
     schemaSet.getResourceFactoryRegistry().getExtensionToFactoryMap()
         .put("ecore", new EcoreResourceFactoryImpl());
