@@ -178,7 +178,8 @@ public final class MdObjectStructureRead {
       listOrEmpty(invokeNoArgOrNull(childObjects, "getAddressingAttribute")), dto.childSynonyms));
     dto.operations.addAll(readStringItems(listOrEmpty(invokeNoArgOrNull(childObjects, "getOperation"))));
     dto.urlTemplates.addAll(readStringItems(listOrEmpty(invokeNoArgOrNull(childObjects, "getURLTemplate"))));
-    dto.channels.addAll(readStringItems(listOrEmpty(invokeNoArgOrNull(childObjects, "getChannel"))));
+    dto.channels.addAll(readStringItems(
+      listOrEmpty(invokeNoArgOrNull(childObjects, "getIntegrationServiceChannel"))));
     dto.tables.addAll(readStringItems(listOrEmpty(invokeNoArgOrNull(childObjects, "getTable"))));
     dto.cubes.addAll(readStringItems(listOrEmpty(invokeNoArgOrNull(childObjects, "getCube"))));
     dto.functions.addAll(readStringItems(listOrEmpty(invokeNoArgOrNull(childObjects, "getFunction"))));

@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mdclass:IntegrationService xmlns:mdclass="http://g5.1c.ru/v8/dt/metadata/mdclass" uuid="5a4a7ddb-4928-4e63-8845-dd57f35d5c3e">
+  <producedTypes>
+    <managerType typeId="aa29a6b0-6816-4c08-b664-251d8b895c00" valueTypeId="7f7fae33-45ab-4d4a-b02b-125ddc0d64b2"/>
+  </producedTypes>
+  <name>СервисИнтеграции1</name>
+  <integrationServiceChannels uuid="574de479-392a-4f2b-89cb-95c3fd4983c5">
+    <producedTypes>
+      <managerType typeId="2ba1e484-5692-423b-97bb-2f1cf2e4125c" valueTypeId="c70c3af1-7034-4517-9847-266d7b7a5ff0"/>
+    </producedTypes>
+    <name>Отправка</name>
+    <synonym>
+      <key>ru</key>
+      <value>Отправка заказов</value>
+    </synonym>
+    <externalIntegrationServiceChannelName>/queue/orders</externalIntegrationServiceChannelName>
+  </integrationServiceChannels>
+  <integrationServiceChannels uuid="0d86956d-40dc-4cd3-89e7-e1a5d711e222">
+    <producedTypes>
+      <managerType typeId="d6c233fd-0685-4465-a3aa-bb12e362d0c3" valueTypeId="672cf3bb-9b9f-4eca-b203-30ec01e7e2f8"/>
+    </producedTypes>
+    <name>Получение</name>
+    <externalIntegrationServiceChannelName>/queue/answers</externalIntegrationServiceChannelName>
+    <messageDirection>Receive</messageDirection>
+    <receiveMessageProcessing>ПолучениеОбработкаПолученияСообщения</receiveMessageProcessing>
+    <transactioned>true</transactioned>
+  </integrationServiceChannels>
+</mdclass:IntegrationService>

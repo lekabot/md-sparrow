@@ -267,9 +267,10 @@ public final class EdtObjectWriter {
         throw new IllegalArgumentException(
           "Состав объекта правится своими командами: " + field.getName());
       }
-      String nodeClass = classOfNode(model, dto.kind, field.getName());
+      String feature = EdtContractNames.feature(field.getName());
+      String nodeClass = classOfNode(model, dto.kind, feature);
       for (int index = 0; index < wanted.size(); index++) {
-        NodeRef node = new NodeRef(field.getName(), written.get(index).name, null);
+        NodeRef node = new NodeRef(feature, written.get(index).name, null);
         changes.addAll(nodeChanges(node, written.get(index), wanted.get(index), model, nodeClass));
       }
     }
