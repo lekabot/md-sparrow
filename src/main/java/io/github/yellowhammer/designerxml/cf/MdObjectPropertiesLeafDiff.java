@@ -74,6 +74,11 @@ public final class MdObjectPropertiesLeafDiff {
     if (!MdObjectPropertiesDiff.listStringEquals(baseline.nestedSubsystems, incoming.nestedSubsystems)) {
       return List.of();
     }
+    for (MdObjectPropertiesEdit.NamedChildDef def : MdObjectPropertiesEdit.NAMED_CHILDREN) {
+      if (!namedListSameStructure(def.target().apply(baseline), def.target().apply(incoming))) {
+        return List.of();
+      }
+    }
     String kind = incoming.kind;
     if (kind == null) {
       return List.of();
@@ -83,6 +88,9 @@ public final class MdObjectPropertiesLeafDiff {
     // попадала бы в список дважды и вторая резала бы уже изменённый XML по старым смещениям.
     appendNamedChildSynonymComment("Attribute", baseline.attributes, incoming.attributes, out);
     appendNamedChildSynonymComment("TabularSection", baseline.tabularSections, incoming.tabularSections, out);
+    for (MdObjectPropertiesEdit.NamedChildDef def : MdObjectPropertiesEdit.NAMED_CHILDREN) {
+      appendNamedChildSynonymComment(def.element(), def.target().apply(baseline), def.target().apply(incoming), out);
+    }
     // Состав с режимами носит только общий реквизит: блок заменяется целиком
     if (contentMembersChanged(baseline, incoming)) {
       out.add(GranularPatchChange.objectProperty(

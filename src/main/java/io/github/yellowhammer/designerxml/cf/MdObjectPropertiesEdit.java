@@ -200,6 +200,8 @@ public final class MdObjectPropertiesEdit {
     if (MdObjectPropertiesDiff.equalsDto(baseline, dto)) {
       return;
     }
+    rejectStaleNamedChildren(baseline, dto);
+    rejectOwnFileNodeEdits(baseline, dto);
     checkStemMatches(objectXml, dto.internalName);
     String xml = Files.readString(objectXml, StandardCharsets.UTF_8);
     String container = MdObjectPropertiesGranularPatch.containerLocalForKind(dto.kind);
@@ -243,6 +245,40 @@ public final class MdObjectPropertiesEdit {
     throw new IllegalStateException(
       "Не удалось применить изменения точечно (" + reason + "). "
         + "Полная пересборка XML через JAXB предотвращена.");
+  }
+
+  /**
+   * Состав прочих узлов эта запись не меняет: другие имена или порядок в DTO значат, что его
+   * прочитали до добавления, удаления или переименования узла.
+   */
+  private static void rejectStaleNamedChildren(MdObjectPropertiesDto baseline, MdObjectPropertiesDto dto) {
+    for (NamedChildDef def : NAMED_CHILDREN) {
+      if (!MdObjectPropertiesDiff.namedListNamesOnly(def.target().apply(baseline), def.target().apply(dto))) {
+        throw new IllegalArgumentException(
+          "Состав " + def.plural() + " объекта изменился после чтения, перечитайте свойства");
+      }
+    }
+  }
+
+  /**
+   * Узел, описанный своим файлом, лежит в составе объекта одним именем: его свойства правятся
+   * в том файле, а здесь их записать некуда.
+   */
+  private static void rejectOwnFileNodeEdits(MdObjectPropertiesDto baseline, MdObjectPropertiesDto dto) {
+    for (NamedChildDef def : NAMED_CHILDREN) {
+      String label = DESCRIBED_BY_OWN_FILE.get(def.element());
+      if (label == null) {
+        continue;
+      }
+      List<MdNamedPropertyDto> before = def.target().apply(baseline);
+      List<MdNamedPropertyDto> after = def.target().apply(dto);
+      for (int i = 0; i < after.size(); i++) {
+        if (!MdObjectPropertiesDiff.namedListEquals(List.of(before.get(i)), List.of(after.get(i)))) {
+          throw new IllegalArgumentException(
+            "Свойства " + label + " «" + after.get(i).name + "» правятся в отдельном файле");
+        }
+      }
+    }
   }
 
   private static void checkStemMatches(Path objectXml, String internalName) {
@@ -306,26 +342,50 @@ public final class MdObjectPropertiesEdit {
    * список. Из-за этого палитра расширения показывает свойства у всех узлов,
    * а не только у реквизитов, табличных частей, значений, измерений и ресурсов.
    */
-  private static final List<NamedChildDef> NAMED_CHILDREN = List.of(
-    new NamedChildDef("getCommand", dto -> dto.commands),
-    new NamedChildDef("getColumn", dto -> dto.columns),
-    new NamedChildDef("getAccountingFlag", dto -> dto.accountingFlags),
-    new NamedChildDef("getExtDimensionAccountingFlag", dto -> dto.extDimensionAccountingFlags),
-    new NamedChildDef("getAddressingAttribute", dto -> dto.addressingAttributes),
-    new NamedChildDef("getRecalculation", dto -> dto.recalculations),
-    new NamedChildDef("getOperation", dto -> dto.operations),
-    new NamedChildDef("getURLTemplate", dto -> dto.urlTemplates),
-    new NamedChildDef("getIntegrationServiceChannel", dto -> dto.channels),
-    new NamedChildDef("getTable", dto -> dto.tables),
-    new NamedChildDef("getCube", dto -> dto.cubes),
-    new NamedChildDef("getFunction", dto -> dto.functions)
+  static final List<NamedChildDef> NAMED_CHILDREN = List.of(
+    new NamedChildDef("getCommand", "команд", dto -> dto.commands, (dto, list) -> dto.commands = list),
+    new NamedChildDef("getColumn", "граф", dto -> dto.columns, (dto, list) -> dto.columns = list),
+    new NamedChildDef("getAccountingFlag", "признаков учёта", dto -> dto.accountingFlags,
+      (dto, list) -> dto.accountingFlags = list),
+    new NamedChildDef("getExtDimensionAccountingFlag", "признаков учёта субконто",
+      dto -> dto.extDimensionAccountingFlags, (dto, list) -> dto.extDimensionAccountingFlags = list),
+    new NamedChildDef("getAddressingAttribute", "реквизитов адресации", dto -> dto.addressingAttributes,
+      (dto, list) -> dto.addressingAttributes = list),
+    new NamedChildDef("getRecalculation", "перерасчётов", dto -> dto.recalculations,
+      (dto, list) -> dto.recalculations = list),
+    new NamedChildDef("getOperation", "операций", dto -> dto.operations, (dto, list) -> dto.operations = list),
+    new NamedChildDef("getURLTemplate", "шаблонов URL", dto -> dto.urlTemplates,
+      (dto, list) -> dto.urlTemplates = list),
+    new NamedChildDef("getIntegrationServiceChannel", "каналов", dto -> dto.channels,
+      (dto, list) -> dto.channels = list),
+    new NamedChildDef("getTable", "таблиц", dto -> dto.tables, (dto, list) -> dto.tables = list),
+    new NamedChildDef("getCube", "кубов", dto -> dto.cubes, (dto, list) -> dto.cubes = list),
+    new NamedChildDef("getFunction", "функций", dto -> dto.functions, (dto, list) -> dto.functions = list)
   );
 
-  /** Вид узла состава: имя getter в ChildObjects и список DTO, куда он читается. */
-  private record NamedChildDef(
+  /** Узлы, от которых в составе объекта лежит только имя, и их вид в родительном падеже. */
+  private static final Map<String, String> DESCRIBED_BY_OWN_FILE = Map.of(
+    "Recalculation", "перерасчёта",
+    "Table", "таблицы",
+    "Cube", "куба");
+
+  /**
+   * Вид узла состава: имя getter в ChildObjects и список DTO, куда он читается.
+   *
+   * @param plural вид узлов во множественном числе родительного падежа
+   * @param replace заменяет список в DTO
+   */
+  record NamedChildDef(
     String getterName,
-    java.util.function.Function<MdObjectPropertiesDto, List<MdNamedPropertyDto>> target
+    String plural,
+    java.util.function.Function<MdObjectPropertiesDto, List<MdNamedPropertyDto>> target,
+    java.util.function.BiConsumer<MdObjectPropertiesDto, List<MdNamedPropertyDto>> replace
   ) {
+
+    /** Локальное имя элемента узла в выгрузке. */
+    String element() {
+      return getterName.substring(3);
+    }
   }
 
   /** Читает все прочие виды узлов состава объекта. */

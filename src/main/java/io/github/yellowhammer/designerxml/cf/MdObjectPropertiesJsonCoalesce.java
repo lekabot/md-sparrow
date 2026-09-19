@@ -73,6 +73,14 @@ public final class MdObjectPropertiesJsonCoalesce {
     if (incoming.resources == null || incoming.resources.isEmpty()) {
       incoming.resources = copyNamedList(baseline.resources);
     }
+    // Прочие узлы состава: список, которого нет в JSON, берётся из файла со всеми свойствами узлов
+    for (MdObjectPropertiesEdit.NamedChildDef def : MdObjectPropertiesEdit.NAMED_CHILDREN) {
+      List<MdNamedPropertyDto> sent = def.target().apply(incoming);
+      List<MdNamedPropertyDto> stored = def.target().apply(baseline);
+      if ((sent == null || sent.isEmpty()) && stored != null) {
+        def.replace().accept(incoming, new ArrayList<>(stored));
+      }
+    }
     if (incoming.nestedSubsystems == null) {
       incoming.nestedSubsystems = baseline.nestedSubsystems == null
         ? new ArrayList<>()
