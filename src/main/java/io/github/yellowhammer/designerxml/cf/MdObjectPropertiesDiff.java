@@ -239,6 +239,9 @@ public final class MdObjectPropertiesDiff {
     if (!namedListEquals(a.enumValues, b.enumValues)) {
       return false;
     }
+    if (!namedListEquals(a.dimensions, b.dimensions) || !namedListEquals(a.resources, b.resources)) {
+      return false;
+    }
     if (!namedChildrenEqual(a, b)) {
       return false;
     }

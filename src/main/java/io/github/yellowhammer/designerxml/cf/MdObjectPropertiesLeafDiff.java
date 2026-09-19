@@ -88,6 +88,8 @@ public final class MdObjectPropertiesLeafDiff {
     // попадала бы в список дважды и вторая резала бы уже изменённый XML по старым смещениям.
     appendNamedChildSynonymComment("Attribute", baseline.attributes, incoming.attributes, out);
     appendNamedChildSynonymComment("TabularSection", baseline.tabularSections, incoming.tabularSections, out);
+    appendNamedChildSynonymComment("Dimension", baseline.dimensions, incoming.dimensions, out);
+    appendNamedChildSynonymComment("Resource", baseline.resources, incoming.resources, out);
     for (MdObjectPropertiesEdit.NamedChildDef def : MdObjectPropertiesEdit.NAMED_CHILDREN) {
       appendNamedChildSynonymComment(def.element(), def.target().apply(baseline), def.target().apply(incoming), out);
     }
@@ -298,8 +300,6 @@ public final class MdObjectPropertiesLeafDiff {
     }
     List<GranularPatchChange> out = docLikePropertyChanges(baseline, incoming);
     MdSimplePropertiesGranularSerial.appendRegisterScalarChanges(baseline.register, incoming.register, out);
-    appendNamedChildSynonymComment("Dimension", baseline.dimensions, incoming.dimensions, out);
-    appendNamedChildSynonymComment("Resource", baseline.resources, incoming.resources, out);
     return out;
   }
 

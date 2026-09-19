@@ -28,8 +28,8 @@ import java.util.List;
 import java.util.stream.Stream;
 
 /**
- * Запись свойств прочих узлов состава в выгрузке конфигуратора: команд, каналов, признаков
- * учёта, граф, реквизитов адресации, шаблонов URL и операций.
+ * Запись свойств узлов состава в выгрузке конфигуратора: команд, каналов, признаков учёта,
+ * граф, реквизитов адресации, шаблонов URL, операций, измерений и ресурсов.
  *
  * <p>{@code cf-child-nodes} выгружена платформой 8.3.27. {@code cf-child-nodes-edited}
  * выгружена ею же после загрузки файлов с теми же правками: запись должна совпасть с ней
@@ -150,6 +150,31 @@ class MdObjectChildNodesEditTest {
     MdNamedPropertyDto operation = node(dto.operations, "GetVersions");
     operation.synonym = "Версии интерфейса";
     operation.comment = "Поддерживаемые версии";
+
+    write(file, dto);
+
+    assertWrittenLikePlatform(file);
+  }
+
+  @Test
+  void informationRegisterDimensionAndResourceReachFile() throws Exception {
+    String file = "InformationRegisters/РегистрСведений1.xml";
+    MdObjectPropertiesDto dto = read(file);
+    node(dto.dimensions, "Подразделение").comment = "Код подразделения";
+    node(dto.resources, "Сумма").synonym = "Сумма";
+
+    write(file, dto);
+
+    assertWrittenLikePlatform(file);
+  }
+
+  @Test
+  void accountingRegisterDimensionAndResourceReachFile() throws Exception {
+    // У регистра бухгалтерии нет своего моста свойств: измерения и ресурсы пишутся общим путём
+    String file = "AccountingRegisters/РегистрБухгалтерии1.xml";
+    MdObjectPropertiesDto dto = read(file);
+    node(dto.dimensions, "Подразделение").synonym = "Подразделение";
+    node(dto.resources, "Сумма").comment = "Сумма проводки";
 
     write(file, dto);
 
